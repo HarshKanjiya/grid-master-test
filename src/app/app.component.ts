@@ -1,13 +1,120 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
+import { IRow } from '../../projects/ngx-grid-master/src/lib/types/interfaces';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [GridMaster],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'grid-master-test';
+  data: IRow[] = [
+    {
+      cells: [
+        {
+          type: "TEXT",
+          value: "John Doe",
+          readonly: false,
+          style: {
+            fontWeight: 700,
+            bgColor: "#ffffff",
+            color: "#000000",
+            italic: false,
+            textDecoration: "NONE"
+          }
+        },
+        {
+          type: "NUMBER",
+          value: "12345",
+          readonly: true,
+          style: {
+            fontWeight: 400,
+            bgColor: "#f0f0f0",
+            color: "#333333",
+            italic: false,
+            textDecoration: "NONE"
+          },
+          format: "0,0" // Format as number with commas
+        },
+        {
+          type: "DATE",
+          value: "2024-10-03",
+          readonly: false,
+          style: {
+            fontWeight: 400,
+            bgColor: "#ffffff",
+            color: "#0000ff",
+            italic: true,
+            textDecoration: "UNDERLINE"
+          },
+          format: "YYYY-MM-DD" // Date format
+        },
+        {
+          type: "TIME",
+          value: "12:30",
+          readonly: false,
+          style: {
+            fontWeight: 400,
+            bgColor: "#ffffff",
+            color: "#000000",
+            italic: false,
+            textDecoration: "NONE"
+          },
+          format: "HH:mm" // Time format
+        },
+        {
+          type: "DATETIME",
+          value: "2024-10-03T12:30:00",
+          readonly: false,
+          style: {
+            fontWeight: 400,
+            bgColor: "#e0e0e0",
+            color: "#ff0000",
+            italic: false,
+            textDecoration: "NONE"
+          },
+          format: "YYYY-MM-DD HH:mm:ss" // Datetime format
+        },
+        {
+          type: "RADIO",
+          value: "Option1",
+          readonly: false,
+          style: {
+            fontWeight: 400,
+            bgColor: "#ffffff",
+            color: "#333333",
+            italic: false,
+            textDecoration: "NONE"
+          },
+          options: [
+            { value: "Option1", label: "Option 1" },
+            { value: "Option2", label: "Option 2" }
+          ]
+        },
+        {
+          type: "SELECT",
+          value: "Choice2",
+          readonly: true,
+          style: {
+            fontWeight: 400,
+            bgColor: "#f5f5f5",
+            color: "#000000",
+            italic: false,
+            textDecoration: "NONE"
+          },
+          options: [
+            { value: "Choice1", label: "Choice 1" },
+            { value: "Choice2", label: "Choice 2" },
+            { value: "Choice3", label: "Choice 3" }
+          ]
+        }
+      ]
+    }
+  ]
+
+  onDataChange(event: any) {
+    console.log('event :>> ', event);
+  }
 }

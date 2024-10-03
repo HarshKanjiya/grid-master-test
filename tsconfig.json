@@ -11,6 +11,11 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "paths": {
+      "ngx-grid-master": [
+        "./dist/ngx-grid-master"
+      ]
+    },
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
