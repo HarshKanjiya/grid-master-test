@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
 import { IRow } from '../../projects/ngx-grid-master/src/lib/types/interfaces';
+import { ScrollingModule } from "@angular/cdk/scrolling"
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [GridMaster],
+  imports: [GridMaster, ScrollingModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

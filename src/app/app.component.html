@@ -1,1 +1,6 @@
-<grid-master [data]="data" (dataChange)="onDataChange($event)"></grid-master>
+<grid-master
+  [horizontalHeader]="true"
+  [verticalHeader]="true"
+  [data]="data"
+  (dataChange)="onDataChange($event)"
+></grid-master>

@@ -1,10 +1,11 @@
-import { Component, input, model, output } from '@angular/core';
-import { IHeaderCell, IRow } from '../types/interfaces';
+import { Component, input, model } from '@angular/core';
+import { IHeaderCell, IRow } from '../../types/interfaces';
+import { ScrollingModule } from "@angular/cdk/scrolling"
 
 @Component({
   selector: 'grid-master',
   standalone: true,
-  imports: [],
+  imports: [ScrollingModule],
   templateUrl: './grid-master.component.html',
   styleUrl: './grid-master.component.css'
 })
@@ -15,8 +16,8 @@ export class GridMaster {
   cellWidth = input<number>(100);
 
   virtualScrolling = input<boolean>(true);
-  horizontalHeader = input<boolean>(true);
-  verticalHeader = input<boolean>(true);
+  horizontalHeader = input<boolean>(false);
+  verticalHeader = input<boolean>(false);
   horizontalHeaderData = input<IHeaderCell[]>([]);
   verticalHeaderData = input<IHeaderCell[]>([]);
 

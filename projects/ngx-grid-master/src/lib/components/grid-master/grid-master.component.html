@@ -1,0 +1,76 @@
+<div class="grid-container">
+  <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
+    <table class="table">
+      @if(horizontalHeader()){
+      <thead>
+        <tr class="headerRow">
+          @for (cell of [].constructor(colCount()); track $index) {
+          <th
+            class="headerCell"
+            [style.border-left-width.px]="$index > 0 ? 1 : 0"
+            [style.border-bottom-width.px]="1"
+            [style.min-width.px]="cellWidth()"
+            [style.min-height.px]="cellHeight()"
+          >
+            test
+          </th>
+          }
+        </tr>
+      </thead>
+      }
+      <tbody>
+        <!-- @for (row of [].constructor(rowCount()); track $index; let rowIndex =
+      $index) {
+
+      <tr>
+        <td
+          class="th"
+          [style.border-top-width.px]="$index > 0 ? 1 : 0"
+          [style.min-width.px]="cellWidth()"
+          [style.min-height.px]="cellHeight()"
+        >
+          {{ rowIndex }}
+        </td>
+        @for (cell of [].constructor(colCount()); track $index; let cellIndex =
+        $index) { @if(verticalHeader()){ }
+        <td
+          class="td"
+          [style.border-left-width.px]="1"
+          [style.border-top-width.px]="rowIndex > 0 ? 1 : 0"
+          [style.min-width.px]="cellWidth()"
+          [style.min-height.px]="cellHeight()"
+        >
+          Cell ({{ rowIndex }}, {{ cellIndex }})
+        </td>
+        }
+      </tr>
+
+      } -->
+
+        <tr
+          class="row"
+          *cdkVirtualFor="
+            let row of [].constructor(rowCount());
+            let rowIndex = index
+          "
+        >
+          @if(verticalHeader()){
+          <th class="headerCell">
+            {{ rowIndex }}
+          </th>
+          } @for (cell of [].constructor(colCount()); track $index; let
+          cellIndex = $index) { @if(verticalHeader()){ }
+          <td
+            class="cell"
+            [style.border-left-width.px]="1"
+            [style.min-width.px]="cellWidth()"
+            [style.min-height.px]="cellHeight()"
+          >
+            Cell ({{ rowIndex }}, {{ cellIndex }})
+          </td>
+          }
+        </tr>
+      </tbody>
+    </table>
+  </cdk-virtual-scroll-viewport>
+</div>
