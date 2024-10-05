@@ -16,6 +16,7 @@
   border-color: rgba(34, 36, 38, 0.25);
   border-style: solid;
   border-width: 0;
+  user-select: none;
 }
 
 .headerCell {
@@ -43,4 +44,16 @@
   padding: 1rem;
 }
 
+.headerCell {
+  text-align: center;
+  cursor: pointer;
+}
 
+.highlighted {
+  background-color: rgb(241, 241, 241);
+}
+
+.highlightedHeaderCell {
+  background-color: rgb(246, 247, 252);
+  font-weight: 700;
+}

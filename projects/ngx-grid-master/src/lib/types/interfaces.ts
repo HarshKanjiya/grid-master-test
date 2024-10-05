@@ -26,7 +26,7 @@ export interface ICellOptions {
 }
 
 export interface IHeaderCell {
-  label: string,
-  sorting: boolean,
-  func: () => any
+  label?: string | undefined,
+  sorting?: boolean,
+  func?: () => any
 }

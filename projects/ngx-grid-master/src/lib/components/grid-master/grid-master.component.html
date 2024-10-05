@@ -1,52 +1,43 @@
 <div class="grid-container">
   <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
-    <table class="table">
+    <table class="table" copyPaste [copyData]="getSelectedCells()" (onPaste)="onCellPaste($event)" >
       @if(horizontalHeader()){
       <thead>
         <tr class="headerRow">
-          @for (cell of [].constructor(colCount()); track $index) {
+          @if(verticalHeader()){
           <th
             class="headerCell"
+            [style.min-width.px]="cellWidth()"
+            [style.border-right-width.px]="1"
+            [style.border-bottom-width.px]="1"
+            [style.min-height.px]="cellHeight()"
+            doubleClick
+            (onDoubleClick)="selectAll()"
+          ></th>
+          } @for (cell of [].constructor(colCount()); track $index; let colIndex
+          = $index) {
+          <th
+            class="headerCell"
+            [ngClass]="{ highlighted: selectedCol == colIndex }"
             [style.border-left-width.px]="$index > 0 ? 1 : 0"
             [style.border-bottom-width.px]="1"
             [style.min-width.px]="cellWidth()"
             [style.min-height.px]="cellHeight()"
+            doubleClick
+            (onDoubleClick)="onColumnSelect(colIndex)"
+            [ngClass]="{
+              highlightedHeaderCell: selectedCol == colIndex
+            }"
           >
-            test
+            {{
+              hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
+            }}
           </th>
           }
         </tr>
       </thead>
       }
       <tbody>
-        <!-- @for (row of [].constructor(rowCount()); track $index; let rowIndex =
-      $index) {
-
-      <tr>
-        <td
-          class="th"
-          [style.border-top-width.px]="$index > 0 ? 1 : 0"
-          [style.min-width.px]="cellWidth()"
-          [style.min-height.px]="cellHeight()"
-        >
-          {{ rowIndex }}
-        </td>
-        @for (cell of [].constructor(colCount()); track $index; let cellIndex =
-        $index) { @if(verticalHeader()){ }
-        <td
-          class="td"
-          [style.border-left-width.px]="1"
-          [style.border-top-width.px]="rowIndex > 0 ? 1 : 0"
-          [style.min-width.px]="cellWidth()"
-          [style.min-height.px]="cellHeight()"
-        >
-          Cell ({{ rowIndex }}, {{ cellIndex }})
-        </td>
-        }
-      </tr>
-
-      } -->
-
         <tr
           class="row"
           *cdkVirtualFor="
@@ -55,18 +46,42 @@
           "
         >
           @if(verticalHeader()){
-          <th class="headerCell">
-            {{ rowIndex }}
+          <th
+            class="headerCell"
+            [ngClass]="{
+              highlightedHeaderCell: selectedRow == rowIndex
+            }"
+            doubleClick
+            (onDoubleClick)="onRowSelect(rowIndex)"
+          >
+            {{
+              vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
+            }}
           </th>
-          } @for (cell of [].constructor(colCount()); track $index; let
-          cellIndex = $index) { @if(verticalHeader()){ }
+          } @for (cell of [].constructor(colCount()); track $index; let colIndex
+          = $index) { @if(verticalHeader()){ }
           <td
             class="cell"
+            [ngClass]="{
+              highlighted: selectedCol == colIndex || selectedRow == rowIndex
+            }"
             [style.border-left-width.px]="1"
             [style.min-width.px]="cellWidth()"
             [style.min-height.px]="cellHeight()"
-          >
-            Cell ({{ rowIndex }}, {{ cellIndex }})
+            [attr.data-row]="rowIndex"
+            [attr.data-col]="colIndex"
+            (mousedown)="onMouseDown($event, rowIndex, colIndex)"
+            (mouseenter)="onMouseEnter($event, rowIndex, colIndex)"
+            (mouseup)="onMouseUp()"
+            [class.highlighted]="isSelected(rowIndex, colIndex)"
+            >
+            <!-- whenPaste
+            (onPaste)="onCellPaste($event, rowIndex, colIndex)" -->
+            {{
+              data()[rowIndex] &&
+                data()[rowIndex].cells[colIndex] &&
+                (data()[rowIndex].cells[colIndex].value ?? "")
+            }}
           </td>
           }
         </tr>
