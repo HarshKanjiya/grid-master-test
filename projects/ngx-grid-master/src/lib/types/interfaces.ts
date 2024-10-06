@@ -12,12 +12,9 @@ export interface ICell {
 }
 
 export interface ICellStyle {
-  fontWeight?: number,
   bgColor?: string,
   color?: string,
-  italic?: boolean,
-  textAlign?: "LEFT" | "CENTER" | "RIGHT",
-  textDecoration?: "NONE" | "UNDERLINE" | "OVERLINE" | "LINETHROUGH"
+  classes?: string
 }
 
 export interface ICellOptions {
@@ -28,5 +25,7 @@ export interface ICellOptions {
 export interface IHeaderCell {
   label?: string | undefined,
   sorting?: boolean,
+  height?: number,
+  width?: number,
   func?: () => any
 }

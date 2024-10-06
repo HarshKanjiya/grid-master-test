@@ -1,91 +1,121 @@
-<div class="grid-container">
-  <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
-    <table class="table" copyPaste [copyData]="getSelectedCells()" (onPaste)="onCellPaste($event)" >
-      @if(horizontalHeader()){
-      <thead>
-        <tr class="headerRow">
-          @if(verticalHeader()){
-          <th
-            class="headerCell"
-            [style.min-width.px]="cellWidth()"
-            [style.border-right-width.px]="1"
-            [style.border-bottom-width.px]="1"
-            [style.min-height.px]="cellHeight()"
-            doubleClick
-            (onDoubleClick)="selectAll()"
-          ></th>
-          } @for (cell of [].constructor(colCount()); track $index; let colIndex
-          = $index) {
-          <th
-            class="headerCell"
-            [ngClass]="{ highlighted: selectedCol == colIndex }"
-            [style.border-left-width.px]="$index > 0 ? 1 : 0"
-            [style.border-bottom-width.px]="1"
-            [style.min-width.px]="cellWidth()"
-            [style.min-height.px]="cellHeight()"
-            doubleClick
-            (onDoubleClick)="onColumnSelect(colIndex)"
-            [ngClass]="{
-              highlightedHeaderCell: selectedCol == colIndex
-            }"
-          >
-            {{
-              hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
-            }}
-          </th>
-          }
-        </tr>
-      </thead>
-      }
-      <tbody>
-        <tr
-          class="row"
-          *cdkVirtualFor="
-            let row of [].constructor(rowCount());
-            let rowIndex = index
-          "
-        >
-          @if(verticalHeader()){
-          <th
-            class="headerCell"
-            [ngClass]="{
-              highlightedHeaderCell: selectedRow == rowIndex
-            }"
-            doubleClick
-            (onDoubleClick)="onRowSelect(rowIndex)"
-          >
-            {{
-              vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
-            }}
-          </th>
-          } @for (cell of [].constructor(colCount()); track $index; let colIndex
-          = $index) { @if(verticalHeader()){ }
-          <td
-            class="cell"
-            [ngClass]="{
-              highlighted: selectedCol == colIndex || selectedRow == rowIndex
-            }"
-            [style.border-left-width.px]="1"
-            [style.min-width.px]="cellWidth()"
-            [style.min-height.px]="cellHeight()"
-            [attr.data-row]="rowIndex"
-            [attr.data-col]="colIndex"
-            (mousedown)="onMouseDown($event, rowIndex, colIndex)"
-            (mouseenter)="onMouseEnter($event, rowIndex, colIndex)"
-            (mouseup)="onMouseUp()"
-            [class.highlighted]="isSelected(rowIndex, colIndex)"
+<div class="wrapper">
+  @if(allowStyling()){
+  <div class="stylePanel">
+    <h2>Style</h2>
+  </div>
+  }
+
+  <div class="grid-container">
+    <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
+      <table
+        class="table"
+        copyPaste
+        [copyData]="getSelectedCells()"
+        (onPaste)="onCellPaste($event)"
+        arrowControl
+        (arrowDown)="onArrowDown()"
+        (arrowUp)="onArrowUp()"
+        (arrowLeft)="onArrowLeft()"
+        (arrowRight)="onArrowRight()"
+      >
+        @if(horizontalHeader()){
+        <thead>
+          <tr class="headerRow">
+            @if(verticalHeader()){
+            <th
+              class="headerCell"
+              [style.width.px]="cellWidth()"
+              [style.height.px]="cellHeight()"
+              [style.border-right-width.px]="1"
+              doubleClick
+              (onDoubleClick)="selectAll()"
+            ></th>
+            } @for (cell of [].constructor(colCount()); track $index; let
+            colIndex = $index) {
+            <th
+              class="headerCell"
+              [ngClass]="{ highlighted: selectedCol == colIndex }"
+              [style.border-left-width.px]="$index > 0 ? 1 : 0"
+              [style.min-width.px]="
+                hHeaderData()[colIndex] &&
+                (hHeaderData()[colIndex].width ?? cellWidth())
+              "
+              [style.max-width.px]="
+                hHeaderData()[colIndex] &&
+                (hHeaderData()[colIndex].width ?? cellWidth())
+              "
+              [style.min-height.px]="cellHeight()"
+              [style.max-height.px]="cellHeight()"
+              doubleClick
+              (onDoubleClick)="onColumnSelect(colIndex)"
+              [ngClass]="{
+                highlightedHeaderCell: selectedCol == colIndex
+              }"
             >
-            <!-- whenPaste
-            (onPaste)="onCellPaste($event, rowIndex, colIndex)" -->
-            {{
-              data()[rowIndex] &&
-                data()[rowIndex].cells[colIndex] &&
-                (data()[rowIndex].cells[colIndex].value ?? "")
-            }}
-          </td>
-          }
-        </tr>
-      </tbody>
-    </table>
-  </cdk-virtual-scroll-viewport>
+              {{
+                hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
+              }}
+            </th>
+            }
+          </tr>
+        </thead>
+        }
+        <tbody>
+          <tr
+            class="row"
+            *cdkVirtualFor="
+              let row of [].constructor(rowCount());
+              let rowIndex = index
+            "
+          >
+            @if(verticalHeader()){
+            <th
+              class="headerCell"
+              [style.border-top-width.px]="1"
+              [style.min-width.px]="cellWidth()"
+              [style.max-width.px]="cellWidth()"
+              [style.min-height.px]="
+                vHeaderData()[rowIndex] &&
+                (vHeaderData()[rowIndex].height ?? cellHeight())
+              "
+              [style.max-height.px]="
+                vHeaderData()[rowIndex] &&
+                (vHeaderData()[rowIndex].height ?? cellHeight())
+              "
+              [ngClass]="{
+                highlightedHeaderCell: selectedRow == rowIndex
+              }"
+              doubleClick
+              (onDoubleClick)="onRowSelect(rowIndex)"
+            >
+              {{
+                vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
+              }}
+            </th>
+            } @for (cell of [].constructor(colCount()); track $index; let
+            colIndex = $index) { @if(verticalHeader()){ }
+
+            <td
+              class="cell"
+              [style.border-left-width.px]="1"
+              [style.border-top-width.px]="1"
+              [attr.data-row]="rowIndex"
+              [attr.data-col]="colIndex"
+              (mousedown)="onMouseDown($event, rowIndex, colIndex)"
+              (mouseenter)="onMouseEnter($event, rowIndex, colIndex)"
+              (mouseup)="onMouseUp()"
+              [ngClass]="isSelected(rowIndex, colIndex)"
+              (focus)="selectCell(data()[rowIndex].cells[colIndex])"
+            >
+              <grid-cell
+                [(cell)]="data()[rowIndex].cells[colIndex]"
+                [focused]="isCellSelected(rowIndex, colIndex)"
+              ></grid-cell>
+            </td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </cdk-virtual-scroll-viewport>
+  </div>
 </div>

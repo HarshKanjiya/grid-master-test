@@ -1,0 +1,14 @@
+@if(!focused()){
+<p>
+  @switch (cell()?.type) { @case ("TEXT"){ {{ cell()?.value }}} @case ("DATE"){
+  {{ cell()?.value | date : cell()?.format ?? "MM/dd/yyyy" }}} @case
+  ("DATETIME"){ {{ cell()?.value | date : cell()?.format ?? "short" }}} @case
+  ("NUMBER"){ {{ cell()?.value }}} @case ("RADIO"){ {{ cell()?.value }}} @case
+  ("TIME"){ {{ cell()?.value }}} @case ("SELECT"){ {{ cell()?.value }}} @default
+  {
+  {{ cell()?.value }}
+  } }
+</p>
+}@else {
+<input #inputElement [value]="cell()?.value" (blur)="saveValue($event)" />
+}

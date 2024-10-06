@@ -1,0 +1,13 @@
+p{
+  word-break: keep-all;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  padding: 7px 9px;
+}
+
+input{
+  padding: 7px 9px;
+  height: 100%;
+  width: 100%;
+}
