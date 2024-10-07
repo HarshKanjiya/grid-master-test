@@ -100,3 +100,7 @@
   border-radius: 0.6rem;
   border: 1px solid rgba(34, 36, 38, 0.25);
 }
+
+.cdk-virtual-scroll-content-wrapper {
+  transform: none !important;
+}

@@ -14,6 +14,9 @@ export class ArrowControlDirective {
   constructor() { }
 
   @HostListener('document:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+    const cursorPosition = input.selectionStart;
+
     switch (event.key) {
       case 'ArrowUp':
         this.arrowUp.emit(true);
@@ -23,12 +26,16 @@ export class ArrowControlDirective {
         this.arrowDown.emit(true);
         break;
       case 'ArrowLeft':
-        event.preventDefault();
-        this.arrowLeft.emit(true);
+        if (cursorPosition === 0) {
+          event.preventDefault();
+          this.arrowLeft.emit(true);
+        }
         break;
       case 'ArrowRight':
-        event.preventDefault();
-        this.arrowRight.emit(true);
+        if (cursorPosition === input.value.length) {
+          event.preventDefault();
+          this.arrowRight.emit(true);
+        }
         break;
       default:
         break;

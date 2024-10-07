@@ -1,4 +1,4 @@
-@if(!focused()){
+<!-- @if(!focused()){
 <p>
   @switch (cell()?.type) { @case ("TEXT"){ {{ cell()?.value }}} @case ("DATE"){
   {{ cell()?.value | date : cell()?.format ?? "MM/dd/yyyy" }}} @case
@@ -12,3 +12,28 @@
 }@else {
 <input #inputElement [value]="cell()?.value" (blur)="saveValue($event)" />
 }
+ -->
+
+<p>
+  @switch (cell()?.type) {
+  @case ("DATE"){
+  <input type="date" [value]="cell()?.value" [disabled]="">
+  }
+  @case ("SELECT"){
+  <select id="slct" [value]="cell()?.value">
+    @for (item of cell()?.options; track $index) {
+    <option [value]="item.value">{{item.label}}</option>
+    }
+  </select>
+  }
+  @case ("CHECKBOX"){
+  <label class="container">
+    <input type="checkbox" [checked]="cell()?.value" [value]="false">
+  </label>
+  }
+  @default
+  {
+  <input #inputElement [value]="cell()?.value" (blur)="saveValue($event)" />
+  }
+  }
+</p>

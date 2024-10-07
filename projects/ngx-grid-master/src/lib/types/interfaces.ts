@@ -3,8 +3,8 @@ export interface IRow {
 }
 
 export interface ICell {
-  type: "TEXT" | "NUMBER" | "DATE" | "TIME" | "DATETIME" | "RADIO" | "SELECT",
-  value?: string,
+  type: "TEXT" | "NUMBER" | "DATE" | "TIME" | "DATETIME" | "RADIO" | "SELECT" | "CHECKBOX",
+  value?: string | boolean | any,
   readonly?: boolean,
   style?: ICellStyle,
   options?: ICellOptions[],

@@ -1,7 +1,7 @@
+import { ScrollingModule } from "@angular/cdk/scrolling";
 import { Component } from '@angular/core';
-import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
 import { IRow } from '../../projects/ngx-grid-master/src/lib/types/interfaces';
-import { ScrollingModule } from "@angular/cdk/scrolling"
+import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,11 @@ import { ScrollingModule } from "@angular/cdk/scrolling"
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-
+  // demo column
+  column = [
+    { text: 'Sample', field: 'sampleID', sortIndicator: true, readOnly: true },
+    { text: 'Date', field: 'sourceDate', dateFormat: 'MM/DD/YYYY' },
+  ];
   data: IRow[] = [];
 
   ngOnInit() {
@@ -75,7 +79,7 @@ export class AppComponent {
           },
           {
             type: "SELECT",
-            value: `Choice${(rowIndex % 3) + 1}`,
+            value: `Choice${(rowIndex % 8) + 1}`,
             readonly: true,
             style: {
 
@@ -83,8 +87,18 @@ export class AppComponent {
             options: [
               { value: "Choice1", label: "Choice 1" },
               { value: "Choice2", label: "Choice 2" },
-              { value: "Choice3", label: "Choice 3" }
+              { value: "Choice3", label: "Choice 3" },
+              { value: "Choice4", label: "Choice 4" },
+              { value: "Choice5", label: "Choice 5" },
+              { value: "Choice6", label: "Choice 6" },
+              { value: "Choice7", label: "Choice 7" },
+              { value: "Choice8", label: "Choice 8" }
             ]
+          },
+          {
+            type: "CHECKBOX",
+            value: rowIndex % 2 ? true : false,
+            readonly: true,
           }
         ]
       })

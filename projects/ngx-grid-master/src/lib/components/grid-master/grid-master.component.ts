@@ -1,11 +1,11 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, model, signal } from '@angular/core';
+import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 import { CopyPasteDirective } from "../../directives/copyPaste.directive";
 import { DoubleClickDirective } from '../../directives/double-click.directive';
 import { ICell, IHeaderCell, IRow } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
-import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 
 @Component({
   selector: 'grid-master',
@@ -64,15 +64,11 @@ export class GridMaster {
   constructor() { }
 
   ngOnInit(): void {
-
-
-
     for (let x = 0; x < this.colCount(); x++) {
       if (!this.data()[x]) this.data()[x] = { cells: [] }
       for (let y = 0; y < this.rowCount(); y++) {
         if (!this.data()[x].cells[y]) this.data()[x].cells[y] = this.getDefaultCell("");
       }
-
     }
   }
 
@@ -165,7 +161,7 @@ export class GridMaster {
     let dataString: string = "";
     cellData.forEach((row: ICell[], ind) => {
       let temp: string[] = [];
-      row.forEach((cell: ICell) => temp.push(cell.value ?? ""))
+      row.forEach((cell: ICell) => temp.push(cell.value ?? null))
       dataString = dataString + temp.join('\t')
       if (ind < cellData.length - 1) {
         dataString += "\n";
@@ -194,7 +190,7 @@ export class GridMaster {
         if (this.data()[valRowInd + rowIndex].cells[valColInd + colIndex]) this.data()[valRowInd + rowIndex].cells[valColInd + colIndex].value = val;
         else this.data()[valRowInd + rowIndex].cells[valColInd + colIndex] = this.getDefaultCell(val)
       })
-    })
+    });
   }
 
   getDefaultCell(value: string): ICell {

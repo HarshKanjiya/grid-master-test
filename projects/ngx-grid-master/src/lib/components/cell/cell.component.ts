@@ -12,8 +12,8 @@ import { DatePipe } from '@angular/common';
 export class CellComponent {
 
   @ViewChild('inputElement') inputElement?: ElementRef;
-  cell = model<ICell>()
-  focused = input<boolean>()
+  cell = model<ICell>();
+  focused = input<boolean>();
   constructor() {
     effect(() => {
       if (this.focused() && this.inputElement) this.inputElement.nativeElement.focus();

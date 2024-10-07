@@ -1,4 +1,4 @@
-p{
+p {
   word-break: keep-all;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -6,8 +6,12 @@ p{
   padding: 7px 9px;
 }
 
-input{
+input,
+select {
   padding: 7px 9px;
   height: 100%;
   width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
 }
