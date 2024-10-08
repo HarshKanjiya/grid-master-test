@@ -25,6 +25,7 @@ import { CellComponent } from "../cell/cell.component";
 export class GridMaster {
   cellHeight = input<number>(20);
   cellWidth = input<number>(100);
+  rowCount = input<number>(100);
 
   virtualScrolling = input<boolean>(true);
 
@@ -49,10 +50,10 @@ export class GridMaster {
     else return Array.from({ length: this.rowCount() }, (_, i) => ({ label: i + 1, height: this.cellHeight() }));
   });
 
-  rowCount = computed(() => this.data().length);
   colCount = computed(() => this.horizontalHeaderData().length);
 
-  selectedCells: ICell[] = [];
+  selectedCells: { row: number, col: number }[] = [];
+  cellValueString: string = "";
   selectedRow: number = -1;
   selectedCol: number = -1;
   selectionStart = signal<{ row: number, col: number } | null>(null);
@@ -64,13 +65,6 @@ export class GridMaster {
   constructor() { }
 
   ngOnInit(): void {
-    /* for (let x = 0; x < this.colCount(); x++) {
-      if (!this.data()[x]) this.data()[x] = { cells: [] }
-      for (let y = 0; y < this.rowCount(); y++) {
-        if (!this.data()[x].cells[y]) this.data()[x].cells[y] = this.getDefaultCell("");
-      }
-    } */
-
     let _temp = this.data();
     for (let i = 0; i < this.rowCount(); i++) {
       if (_temp[i] == undefined) _temp[i] = {};
@@ -86,12 +80,14 @@ export class GridMaster {
     this.selectedCol = -1;
     this.selectionStart.set({ row: rowIndex, col: 0 })
     this.selectionEnd.set({ row: rowIndex, col: this.colCount() })
+    this.getSelectedCells();
   }
   onColumnSelect(colIndex: number) {
     this.selectedCol = colIndex;
     this.selectedRow = -1;
     this.selectionStart.set({ row: 0, col: colIndex })
     this.selectionEnd.set({ row: this.rowCount(), col: colIndex })
+    this.getSelectedCells();
   }
 
   selectAll() {
@@ -100,6 +96,7 @@ export class GridMaster {
   }
 
   onMouseDown(event: MouseEvent, row: number, col: number) {
+    this.selectedCells = [{ row, col }];
     this.selectionStart.set({ row, col });
     this.selectionEnd.set({ row, col });
     this.isSelecting.set(true);
@@ -107,12 +104,15 @@ export class GridMaster {
 
   onMouseEnter(event: MouseEvent, row: number, col: number) {
     if (this.isSelecting()) {
+      this.selectedCells.push({ row, col })
       this.selectionEnd.set({ row, col });
     }
   }
 
   onMouseUp() {
     this.isSelecting.set(false);
+    this.getSelectedCells();
+
   }
 
   isCellSelected(row: number, col: number): boolean {
@@ -135,20 +135,11 @@ export class GridMaster {
 
     let classes = [];
 
-    // If the cell is within the selected range
     if (row >= minRow && row <= maxRow && col >= minCol && col <= maxCol) {
       classes.push('selected-cell');
-
-      // Apply border on the top if it's the top-most row
       if (row === minRow) classes.push('selected-cell-top');
-
-      // Apply border on the bottom if it's the bottom-most row
       if (row === maxRow) classes.push('selected-cell-bottom');
-
-      // Apply border on the left if it's the left-most column
       if (col === minCol) classes.push('selected-cell-left');
-
-      // Apply border on the right if it's the right-most column
       if (col === maxCol) classes.push('selected-cell-right');
     }
 
@@ -165,28 +156,24 @@ export class GridMaster {
     const minCol = Math.min(start.col, end.col);
     const maxCol = Math.max(start.col, end.col);
 
-    let cellData: ICell[][] = this.data().slice(minRow, maxRow + 1).map(row => row.cells.slice(minCol, maxCol + 1));
+    let rows: ICell[][] = this.data().slice(minRow, maxRow + 1)
+    let cols = this.horizontalHeaderData().slice(minCol, maxCol + 1).map((x) => x.field)
 
-    let dataString: string = "";
-    cellData.forEach((row: ICell[], ind) => {
-      let temp: string[] = [];
-      row.forEach((cell: ICell) => temp.push(cell.value ?? null))
-      dataString = dataString + temp.join('\t')
-      if (ind < cellData.length - 1) {
-        dataString += "\n";
-      }
+    let values: string[] = []
+
+    rows.forEach((row: any) => {
+      let rowVals: string[] = [];
+      cols.forEach((field: string) => {
+        rowVals.push(row[field])
+      })
+      values.push(rowVals.join("\t"))
     })
 
-    return dataString
+    this.cellValueString = values.join("\n")
   }
-
 
   onCellPaste(pastedData: string) {
     if (!pastedData?.length) return
-
-    if (JSON.stringify(pastedData).slice(-3) == '\\n"') {
-      pastedData = pastedData.slice(0, -3);
-    }
 
     let valueArr: string[][] = pastedData.split("\n").map((row: string) => row.split("\t"));
 
@@ -196,8 +183,7 @@ export class GridMaster {
     if (rowIndex < 0 || colIndex < 0) return
     valueArr.forEach((valRow: string[], valRowInd) => {
       valRow.forEach((val: string, valColInd: number) => {
-        if (this.data()[valRowInd + rowIndex].cells[valColInd + colIndex]) this.data()[valRowInd + rowIndex].cells[valColInd + colIndex].value = val;
-        else this.data()[valRowInd + rowIndex].cells[valColInd + colIndex] = this.getDefaultCell(val)
+        this.data()[valRowInd + rowIndex][this.horizontalHeaderData()[valColInd + colIndex].field] = val;
       })
     });
   }
@@ -245,6 +231,9 @@ export class GridMaster {
     this.selectionEnd.set({ row: row, col: newCol })
   }
 
+  cellValueChange(e:any){
+    console.log('e :>> ', e);
+  }
 }
 
 

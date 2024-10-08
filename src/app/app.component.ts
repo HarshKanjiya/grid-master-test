@@ -38,8 +38,16 @@ export class AppComponent {
     { label: 'Report', field: 'reportingStatus', style: 'width: 100px', type: 'checkbox', className: 'htCenter' },
   ];
   sampleData = [
-    { sampleID: 1, sourceDate: new Date('01-01-2024'), lotNumber: 5, sampleDesc: 'Loerm text...', holds: '1,2,3,5', results: 5, label: 'Result Text field', analyzedBy: 9, finalTechBy: 56, billingStatus: false, reportingStatus: true },
-    { sampleID: 2, sourceDate: new Date('01-02-2024'), lotNumber: 8, sampleDesc: 'Loerm text field...', holds: '9,8,5', results: 9, label: 'Result Text field', analyzedBy: 48, finalTechBy: 8, billingStatus: true, reportingStatus: false },
+    { sampleID: 1, sourceDate: '06-20-2024', lotNumber: 4, sampleDesc: 'Lorem text...', holds: '1,2,9,6', results: 9, label: 'Result Text field', analyzedBy: 12, finalTechBy: 25, billingStatus: false, reportingStatus: false },
+    { sampleID: 2, sourceDate: '05-27-2024', lotNumber: 3, sampleDesc: 'Lorem text...', holds: '4,1,5,2,9', results: 6, label: 'Result Text field', analyzedBy: 39, finalTechBy: 96, billingStatus: true, reportingStatus: true },
+    { sampleID: 3, sourceDate: '12-03-2024', lotNumber: 4, sampleDesc: 'Lorem text...', holds: '6,9,1,3,5', results: 9, label: 'Result Text field', analyzedBy: 99, finalTechBy: 7, billingStatus: false, reportingStatus: false },
+    { sampleID: 4, sourceDate: '06-10-2024', lotNumber: 2, sampleDesc: 'Lorem text...', holds: '9,8,3', results: 10, label: 'Result Text field', analyzedBy: 16, finalTechBy: 31, billingStatus: true, reportingStatus: false },
+    { sampleID: 5, sourceDate: '09-18-2024', lotNumber: 8, sampleDesc: 'Lorem text...', holds: '8,6,4', results: 10, label: 'Result Text field', analyzedBy: 47, finalTechBy: 34, billingStatus: true, reportingStatus: false },
+    { sampleID: 6, sourceDate: '11-04-2024', lotNumber: 5, sampleDesc: 'Lorem text...', holds: '2,5,7', results: 5, label: 'Result Text field', analyzedBy: 45, finalTechBy: 98, billingStatus: true, reportingStatus: false },
+    { sampleID: 7, sourceDate: '04-24-2024', lotNumber: 4, sampleDesc: 'Lorem text...', holds: '3,2,1', results: 7, label: 'Result Text field', analyzedBy: 17, finalTechBy: 85, billingStatus: true, reportingStatus: false },
+    { sampleID: 8, sourceDate: '11-11-2024', lotNumber: 8, sampleDesc: 'Lorem text...', holds: '4,9,5,8,3', results: 8, label: 'Result Text field', analyzedBy: 70, finalTechBy: 59, billingStatus: false, reportingStatus: true },
+    { sampleID: 9, sourceDate: '01-27-2024', lotNumber: 9, sampleDesc: 'Lorem text...', holds: '6,1,5', results: 2, label: 'Result Text field', analyzedBy: 22, finalTechBy: 19, billingStatus: true, reportingStatus: true },
+    { sampleID: 10, sourceDate: '08-03-2024', lotNumber: 10, sampleDesc: 'Lorem text...', holds: '4,7,3', results: 6, label: 'Result Text field', analyzedBy: 88, finalTechBy: 11, billingStatus: false, reportingStatus: false },
   ];
 
   data: IRow[] = [];

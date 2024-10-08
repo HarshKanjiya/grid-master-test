@@ -23,7 +23,6 @@ export class CellComponent {
   }
 
   saveValue(event: any) {
-    let _cell = this.cell();
-    this.cell.set({ ..._cell, value: event.target.value, type: _cell?.type ?? "TEXT" })
+    this.cell.set(event.target.value)
   }
 }
