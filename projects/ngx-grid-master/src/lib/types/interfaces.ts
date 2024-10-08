@@ -24,6 +24,9 @@ export interface ICellOptions {
 
 export interface IHeaderCell {
   label?: string | undefined,
+  field: string;
+  type?: string;
+  options?: Array<any>;
   sorting?: boolean,
   height?: number,
   width?: number,

@@ -62,8 +62,10 @@
             <td class="cell" [style.border-left-width.px]="1" [style.border-top-width.px]="1" [attr.data-row]="rowIndex"
               [attr.data-col]="colIndex" (mousedown)="onMouseDown($event, rowIndex, colIndex)"
               (mouseenter)="onMouseEnter($event, rowIndex, colIndex)" (mouseup)="onMouseUp()"
-              [ngClass]="isSelected(rowIndex, colIndex)" (focus)="selectCell(data()[rowIndex].cells[colIndex])">
-              <grid-cell [(cell)]="data()[rowIndex].cells[colIndex]"
+              [ngClass]="isSelected(rowIndex, colIndex)"
+              (focus)="selectCell(data()[rowIndex][horizontalHeaderData()[colIndex].field])">
+              <grid-cell [(cell)]="data()[rowIndex][horizontalHeaderData()[colIndex].field]"
+                [currentCell]="horizontalHeaderData()[colIndex]"
                 [focused]="isCellSelected(rowIndex, colIndex)"></grid-cell>
             </td>
             }

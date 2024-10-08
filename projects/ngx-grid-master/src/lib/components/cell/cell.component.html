@@ -15,25 +15,25 @@
  -->
 
 <p>
-  @switch (cell()?.type) {
-  @case ("DATE"){
-  <input type="date" [value]="cell()?.value" [disabled]="">
+  @switch (currentCell()?.type) {
+  @case ("date"){
+  <input type="date" [value]="cell()">
   }
-  @case ("SELECT"){
-  <select id="slct" [value]="cell()?.value">
-    @for (item of cell()?.options; track $index) {
+  @case ("dropdown"){
+  <select id="slct" [value]="cell()">
+    @for (item of currentCell()?.options; track $index) {
     <option [value]="item.value">{{item.label}}</option>
     }
   </select>
   }
-  @case ("CHECKBOX"){
+  @case ("checkbox"){
   <label class="container">
-    <input type="checkbox" [checked]="cell()?.value" [value]="false">
+    <input type="checkbox" [checked]="cell()" [value]="false">
   </label>
   }
   @default
   {
-  <input #inputElement [value]="cell()?.value" (blur)="saveValue($event)" />
+  <input #inputElement [value]="cell()" (blur)="saveValue($event)" />
   }
   }
 </p>

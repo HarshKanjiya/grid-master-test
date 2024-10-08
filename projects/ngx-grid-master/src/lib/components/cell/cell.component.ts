@@ -1,5 +1,5 @@
 import { Component, computed, effect, ElementRef, input, model, ViewChild } from '@angular/core';
-import { ICell } from '../../types/interfaces';
+import { ICell, IHeaderCell } from '../../types/interfaces';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -12,8 +12,10 @@ import { DatePipe } from '@angular/common';
 export class CellComponent {
 
   @ViewChild('inputElement') inputElement?: ElementRef;
-  cell = model<ICell>();
+  cell = model<any>();
+  currentCell = input<IHeaderCell>();
   focused = input<boolean>();
+
   constructor() {
     effect(() => {
       if (this.focused() && this.inputElement) this.inputElement.nativeElement.focus();

@@ -4,7 +4,7 @@ import { Component, computed, input, model, signal } from '@angular/core';
 import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 import { CopyPasteDirective } from "../../directives/copyPaste.directive";
 import { DoubleClickDirective } from '../../directives/double-click.directive';
-import { ICell, IHeaderCell, IRow } from '../../types/interfaces';
+import { ICell, IHeaderCell } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
 
 @Component({
@@ -23,15 +23,13 @@ import { CellComponent } from "../cell/cell.component";
   styleUrls: ['./grid-master.component.css', "./classes.css"]
 })
 export class GridMaster {
-  rowCount = input<number>(100);
-  colCount = input<number>(100);
-  cellHeight = input<number>(30);
+  cellHeight = input<number>(20);
   cellWidth = input<number>(100);
 
   virtualScrolling = input<boolean>(true);
 
   dataType = input<"JSON" | "GRID" | "CSV">("JSON");
-  data = model<IRow[]>([]);
+  data = model<any[]>([]);
 
   allowStyling = input<boolean>(false);
   horizontalHeader = input<boolean>(false);
@@ -51,6 +49,8 @@ export class GridMaster {
     else return Array.from({ length: this.rowCount() }, (_, i) => ({ label: i + 1, height: this.cellHeight() }));
   });
 
+  rowCount = computed(() => this.data().length);
+  colCount = computed(() => this.horizontalHeaderData().length);
 
   selectedCells: ICell[] = [];
   selectedRow: number = -1;
@@ -64,12 +64,21 @@ export class GridMaster {
   constructor() { }
 
   ngOnInit(): void {
-    for (let x = 0; x < this.colCount(); x++) {
+    /* for (let x = 0; x < this.colCount(); x++) {
       if (!this.data()[x]) this.data()[x] = { cells: [] }
       for (let y = 0; y < this.rowCount(); y++) {
         if (!this.data()[x].cells[y]) this.data()[x].cells[y] = this.getDefaultCell("");
       }
+    } */
+
+    let _temp = this.data();
+    for (let i = 0; i < this.rowCount(); i++) {
+      if (_temp[i] == undefined) _temp[i] = {};
+      this.horizontalHeaderData().map((x => {
+        if (_temp[i][x.field] == undefined) _temp[i][x.field] = "";
+      }))
     }
+    this.data.set(_temp);
   }
 
   onRowSelect(rowIndex: number) {
