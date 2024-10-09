@@ -17,23 +17,24 @@
 <p>
   @switch (currentCell()?.type) {
   @case ("date"){
-  <input type="date"  [value]="cell()">
+  <input type="date" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue( $event['target']['value'])">
   }
   @case ("dropdown"){
-  <select id="slct" [value]="cell()">
+  <select id="slct" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue($event['target']['value'])">
     @for (item of currentCell()?.options; track $index) {
-    <option [value]="item.value">{{item.label}}</option>
+    <option [value]="item">{{item}}</option>
     }
   </select>
   }
   @case ("checkbox"){
   <label class="container">
-    <input type="checkbox" [checked]="cell()" [value]="false">
+    <input type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
+      (change)="saveValue($event['currentTarget']['checked'])">
   </label>
   }
   @default
   {
-  <input #inputElement [value]="cell()" (blur)="saveValue($event)" />
+  <input #inputElement [value]="cell()" [(ngModel)]="currentValue" (blur)="saveValue($event['target']['value'])" />
   }
   }
 </p>

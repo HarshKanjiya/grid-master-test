@@ -25,7 +25,6 @@ import { CellComponent } from "../cell/cell.component";
 export class GridMaster {
   cellHeight = input<number>(20);
   cellWidth = input<number>(100);
-  rowCount = input<number>(100);
 
   virtualScrolling = input<boolean>(true);
 
@@ -51,6 +50,7 @@ export class GridMaster {
   });
 
   colCount = computed(() => this.horizontalHeaderData().length);
+  rowCount = computed(() => this.data().length);
 
   selectedCells: { row: number, col: number }[] = [];
   cellValueString: string = "";
@@ -175,7 +175,7 @@ export class GridMaster {
   onCellPaste(pastedData: string) {
     if (!pastedData?.length) return
 
-    let valueArr: string[][] = pastedData.split("\n").map((row: string) => row.split("\t"));
+    let valueArr: string[][] = pastedData.split(/\r?\n/).map((row: string) => row.split("\t"));
 
     const rowIndex = this.selectionStart()?.row ?? -1;
     const colIndex = this.selectionEnd()?.col ?? -1;
@@ -183,7 +183,10 @@ export class GridMaster {
     if (rowIndex < 0 || colIndex < 0) return
     valueArr.forEach((valRow: string[], valRowInd) => {
       valRow.forEach((val: string, valColInd: number) => {
-        this.data()[valRowInd + rowIndex][this.horizontalHeaderData()[valColInd + colIndex].field] = val;
+        const row = valRowInd + rowIndex;
+        const col = valColInd + colIndex;
+        this.data()[row][this.horizontalHeaderData()[col].field] = val;
+        console.log({ row: row, col: col, newValue: val });
       })
     });
   }
@@ -231,8 +234,9 @@ export class GridMaster {
     this.selectionEnd.set({ row: row, col: newCol })
   }
 
-  cellValueChange(e:any){
-    console.log('e :>> ', e);
+  cellValueChange(e: any) {
+    const obj = { row: this.selectedCells[0].row, col: this.selectedCells[0].col, newValue: e };
+    console.log(obj);
   }
 }
 
