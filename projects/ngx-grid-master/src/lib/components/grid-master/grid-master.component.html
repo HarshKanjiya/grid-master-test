@@ -67,10 +67,15 @@
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]
                 )
               ">
-              <grid-cell [(cell)]="
+              <ng-container *ngIf="isLoading(); else showData">
+                <div class="skeleton-loader"></div>
+              </ng-container>
+              <ng-template #showData>
+                <grid-cell [(cell)]="
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]
                 " (cellChange)="cellValueChange($event)" [currentCell]="horizontalHeaderData()[colIndex]"
-                [focused]="isCellSelected(rowIndex, colIndex)"></grid-cell>
+                  [focused]="isCellSelected(rowIndex, colIndex)"></grid-cell>
+              </ng-template>
             </td>
             }
           </tr>

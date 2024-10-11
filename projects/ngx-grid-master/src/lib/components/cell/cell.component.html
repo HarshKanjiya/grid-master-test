@@ -17,7 +17,9 @@
 <p>
   @switch (currentCell()?.type) {
   @case ("date"){
-  <input type="date" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue( $event['target']['value'])">
+  <!-- <input type="date" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue( $event['target']['value'])"> -->
+  <!-- <app-custom-date-picker placeholder="Pick a date"></app-custom-date-picker> -->
+  <app-custom-date-picker [selectedDate]="currentValue" (dateSelected)="saveValue($event)"></app-custom-date-picker>
   }
   @case ("dropdown"){
   <select id="slct" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue($event['target']['value'])">

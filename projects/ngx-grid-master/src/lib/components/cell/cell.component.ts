@@ -1,12 +1,13 @@
-import { Component, computed, effect, ElementRef, input, model, ViewChild } from '@angular/core';
-import { ICell, IHeaderCell } from '../../types/interfaces';
 import { DatePipe } from '@angular/common';
+import { Component, effect, ElementRef, input, model, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CustomDatePickerComponent } from '../../shared/component/custom-date-picker/custom-date-picker.component';
+import { IHeaderCell } from '../../types/interfaces';
 
 @Component({
   selector: 'grid-cell',
   standalone: true,
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, CustomDatePickerComponent],
   templateUrl: './cell.component.html',
   styleUrl: './cell.component.css'
 })

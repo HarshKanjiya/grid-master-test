@@ -23,6 +23,8 @@ import { CellComponent } from "../cell/cell.component";
   styleUrls: ['./grid-master.component.css', "./classes.css"]
 })
 export class GridMaster {
+  isLoading = signal<boolean>(true);
+
   cellHeight = input<number>(20);
   cellWidth = input<number>(100);
 
@@ -50,7 +52,7 @@ export class GridMaster {
   });
 
   colCount = computed(() => this.horizontalHeaderData().length);
-  rowCount = computed(() => this.data().length);
+  rowCount = computed(() => this.data().length || 100);
 
   selectedCells: { row: number, col: number }[] = [];
   cellValueString: string = "";
@@ -73,6 +75,7 @@ export class GridMaster {
       }))
     }
     this.data.set(_temp);
+    this.isLoading.set(false);
   }
 
   onRowSelect(rowIndex: number) {
