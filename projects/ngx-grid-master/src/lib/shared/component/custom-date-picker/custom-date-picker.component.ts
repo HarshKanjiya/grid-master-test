@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, EventEmitter, HostListener, Input, Output, signal } from '@angular/core';
+import { Component, computed, ElementRef, EventEmitter, HostListener, Input, Output, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,7 +13,7 @@ export class CustomDatePickerComponent {
   @Input() selectedDate: string | null = null;  // Allow parent to provide initial date
   @Output() dateSelected = new EventEmitter<string>();  // Emit date when it changes
 
-  isDatePickerOpen = false;
+  isDatePickerOpen = signal<boolean>(false);
   currentMonth = new Date().getMonth();
   currentYear = new Date().getFullYear();
   daysInMonth: number[] = [];
@@ -23,12 +23,20 @@ export class CustomDatePickerComponent {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  @ViewChild('datePickerElement') datePickerElement!: ElementRef<HTMLDivElement>;
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (this.datePickerElement.nativeElement.contains(event.target as Node)) this.isDatePickerOpen.set(true);
+    else this.isDatePickerOpen.set(false)
+
+  }
+
   constructor() {
     this.generateDaysInMonth(this.currentMonth, this.currentYear);
   }
 
   toggleDatePicker() {
-    this.isDatePickerOpen = !this.isDatePickerOpen;
+    this.isDatePickerOpen.set(!this.isDatePickerOpen());
   }
 
   generateDaysInMonth(month: number, year: number) {
@@ -59,7 +67,7 @@ export class CustomDatePickerComponent {
 
   selectDate(day: number) {
     this.selectedDate = `${this.pad(day)}/${this.pad(this.currentMonth + 1)}/${this.currentYear}`;
-    this.isDatePickerOpen = false;
+    this.isDatePickerOpen.set(false);
     this.emitSelectedDate();
   }
 
@@ -69,15 +77,6 @@ export class CustomDatePickerComponent {
 
   emitSelectedDate() {
     this.dateSelected.emit(this.selectedDate);  // Emit the selected date
-  }
-
-  @HostListener('document:click', ['$event'])
-  clickOutside(event: Event) {
-    if (!event.target) return;
-    const target = event.target as HTMLElement;
-    if (!target.closest('.date-picker-wrapper')) {
-      this.isDatePickerOpen = false;
-    }
   }
 
   isSelected(day: number): boolean {

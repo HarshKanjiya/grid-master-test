@@ -15,28 +15,44 @@
  -->
 
 <p>
-  @switch (currentCell()?.type) {
-  @case ("date"){
+  @switch (currentCell()?.type) { @case ("date"){
   <!-- <input type="date" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue( $event['target']['value'])"> -->
   <!-- <app-custom-date-picker placeholder="Pick a date"></app-custom-date-picker> -->
-  <app-custom-date-picker [selectedDate]="currentValue" (dateSelected)="saveValue($event)"></app-custom-date-picker>
-  }
-  @case ("dropdown"){
-  <select id="slct" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue($event['target']['value'])">
+  <app-custom-date-picker
+    class="cell"
+    [selectedDate]="currentValue"
+    (dateSelected)="saveValue($event)"
+  ></app-custom-date-picker>
+  } @case ("dropdown"){
+  <!-- <select id="slct" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue($event['target']['value'])">
     @for (item of currentCell()?.options; track $index) {
     <option [value]="item">{{item}}</option>
     }
-  </select>
-  }
-  @case ("checkbox"){
+  </select> -->
+  <custom-drop-down
+    class="cell"
+    [(model)]="currentValue"
+    [items]="currentCell().options"
+  >
+  </custom-drop-down>
+  } @case ("checkbox"){
   <label class="container">
-    <input type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
-      (change)="saveValue($event['currentTarget']['checked'])">
+    <input
+      class="cell"
+      type="checkbox"
+      [checked]="cell()"
+      [value]="false"
+      [(ngModel)]="currentValue"
+      (change)="saveValue($event['currentTarget']['checked'])"
+    />
   </label>
-  }
-  @default
-  {
-  <input #inputElement [value]="cell()" [(ngModel)]="currentValue" (blur)="saveValue($event['target']['value'])" />
-  }
-  }
+  } @default {
+  <input
+    class="cell"
+    #inputElement
+    [value]="cell()"
+    [(ngModel)]="currentValue"
+    (blur)="saveValue($event['target']['value'])"
+  />
+  } }
 </p>

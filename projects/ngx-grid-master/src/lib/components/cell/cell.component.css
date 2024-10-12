@@ -1,8 +1,7 @@
-p {
+.cell {
   word-break: keep-all;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   padding: 7px 9px;
 }
 

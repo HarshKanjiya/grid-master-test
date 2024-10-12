@@ -3,11 +3,12 @@ import { Component, effect, ElementRef, input, model, ViewChild } from '@angular
 import { FormsModule } from '@angular/forms';
 import { CustomDatePickerComponent } from '../../shared/component/custom-date-picker/custom-date-picker.component';
 import { IHeaderCell } from '../../types/interfaces';
+import { DropDownComponent } from '../../shared/component/drop-down/drop-down.component';
 
 @Component({
   selector: 'grid-cell',
   standalone: true,
-  imports: [FormsModule, DatePipe, CustomDatePickerComponent],
+  imports: [FormsModule, DatePipe, CustomDatePickerComponent, DropDownComponent],
   templateUrl: './cell.component.html',
   styleUrl: './cell.component.css'
 })

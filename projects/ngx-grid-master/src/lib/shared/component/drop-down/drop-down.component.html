@@ -1,0 +1,31 @@
+<div class="dropdown-container" #dropdownContainer (click)="toggle()">
+  <div class="dropdown-selected-items">
+    @if(selectMultiple()){ @for (item of selectedItems; track $index) {
+    <span>{{ item[bindLabel()] }}</span>
+    } } @if(!selectedItems.length){
+    <span>{{ placeholder() }}</span>
+    }
+  </div>
+  <div class="dropdown-arrow">
+    <i class="fa fa-caret-down"></i>
+  </div>
+</div>
+@if(isOpen()){
+<div class="dropdown-options">
+  <input
+    type="text"
+    name="search"
+    [(ngModel)]="searchText"
+    (input)="filterItems()"
+    placeholder="Search"
+  />
+  <ul>
+    @for (item of visibleItems; track $index) {
+    <li (click)="selectItem(item)">
+      {{ item[bindLabel()] }}
+    </li>
+    }
+  </ul>
+</div>
+
+}
