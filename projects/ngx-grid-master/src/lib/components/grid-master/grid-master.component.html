@@ -28,9 +28,10 @@
               (onDoubleClick)="onColumnSelect(colIndex)" [ngClass]="{
                 highlightedHeaderCell: selectedCol == colIndex
               }">
-              {{
-              hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
-              }}
+              <span class="isSorting" (click)="sortItems($index)">
+                {{
+                hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
+                }}</span>
             </th>
             }
           </tr>

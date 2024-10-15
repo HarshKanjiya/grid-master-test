@@ -7,6 +7,7 @@ import { DoubleClickDirective } from '../../directives/double-click.directive';
 import { VirtualScrollViewportComponent } from "../../shared/component/virtual-scroll-viewport/virtual-scroll-viewport.component";
 import { ICell, IHeaderCell } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
+import { CommonService } from "../../shared/services/common.service";
 
 @Component({
   selector: 'grid-master',
@@ -65,7 +66,7 @@ export class GridMaster {
 
   selectedCell: ICell | null = null;
 
-  constructor() { }
+  constructor(private _commonService: CommonService) { }
 
   ngOnInit(): void {
     let _temp = this.data();
@@ -244,6 +245,12 @@ export class GridMaster {
   cellValueChange(e: any) {
     const obj = { row: this.selectedCells[0].row, col: this.selectedCells[0].col, newValue: e };
     console.log(obj);
+  }
+
+  sortItems(cellIndex) {
+    const columnKey = this.horizontalHeaderData()[cellIndex].field;
+    const sortingData = this._commonService.sortByKey(this.data(), columnKey);
+    this.data.set(sortingData);
   }
 }
 

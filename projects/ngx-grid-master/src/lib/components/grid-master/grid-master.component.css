@@ -126,3 +126,7 @@
     opacity: 0.5;
   }
 }
+
+.isSorting:hover {
+  text-decoration: underline;
+}
