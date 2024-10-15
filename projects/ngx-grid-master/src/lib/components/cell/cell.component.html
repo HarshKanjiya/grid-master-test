@@ -1,42 +1,21 @@
-<!-- @if(!focused()){
 <p>
-  @switch (cell()?.type) { @case ("TEXT"){ {{ cell()?.value }}} @case ("DATE"){
-  {{ cell()?.value | date : cell()?.format ?? "MM/dd/yyyy" }}} @case
-  ("DATETIME"){ {{ cell()?.value | date : cell()?.format ?? "short" }}} @case
-  ("NUMBER"){ {{ cell()?.value }}} @case ("RADIO"){ {{ cell()?.value }}} @case
-  ("TIME"){ {{ cell()?.value }}} @case ("SELECT"){ {{ cell()?.value }}} @default
-  {
-  {{ cell()?.value }}
-  } }
-</p>
-}@else {
-<input #inputElement [value]="cell()?.value" (blur)="saveValue($event)" />
-}
- -->
+  @switch (currentCell()?.type) { @case ("date"){
+  <app-custom-datepicker [(model)]="currentValue" [dateFormat]="'yyyy-MM-dd'" (selectedDateChange)="saveValue($event)">
+  </app-custom-datepicker>
 
-<p>
-  @switch (currentCell()?.type) {
-  @case ("date"){
-  <!-- <input type="date" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue( $event['target']['value'])"> -->
-  <!-- <app-custom-date-picker placeholder="Pick a date"></app-custom-date-picker> -->
-  <app-custom-date-picker [selectedDate]="currentValue" (dateSelected)="saveValue($event)"></app-custom-date-picker>
-  }
-  @case ("dropdown"){
-  <select id="slct" [value]="cell()" [(ngModel)]="currentValue" (change)="saveValue($event['target']['value'])">
-    @for (item of currentCell()?.options; track $index) {
-    <option [value]="item">{{item}}</option>
-    }
-  </select>
-  }
-  @case ("checkbox"){
+  } @case ("dropdown"){
+
+  <app-select [(model)]="currentValue" [options]="currentCell()?.options || []"
+    (selectionChange)="saveValue($event)"></app-select>
+
+  } @case ("checkbox"){
   <label class="container">
-    <input type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
-      (change)="saveValue($event['currentTarget']['checked'])">
+    <input class="cell" type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
+      (change)="saveValue($event['currentTarget']['checked'])" />
   </label>
-  }
-  @default
-  {
-  <input #inputElement [value]="cell()" [(ngModel)]="currentValue" (blur)="saveValue($event['target']['value'])" />
+  } @default {
+  <input class="cell" #inputElement [value]="cell()" [(ngModel)]="currentValue"
+    (blur)="saveValue($event['target']['value'])" />
   }
   }
 </p>

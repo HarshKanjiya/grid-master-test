@@ -109,6 +109,7 @@ export class AppComponent {
     "vb"
   ]
   column = [
+    { label: 'Checked', field: 'isSelected', isShow: true, style: 'width: 56px;', type: 'checkbox', className: 'alignCenter' },
     { label: 'Sample', field: 'sampleID', sortIndicator: true, isShow: true, isEdit: false, style: 'width: 100px;', readOnly: true },
     { label: 'Date', field: 'sourceDate', sortIndicator: true, isShow: true, isEdit: true, style: 'width: 100px', type: 'date', dateFormat: 'MM/DD/YYYY', correctFormat: true, allowInvalid: false },
     { label: 'Lot No.', field: 'lotNumber', isShow: true, isEdit: true, style: 'width: 100px' },
@@ -618,6 +619,7 @@ export class AppComponent {
   ];
 
   data: IRow[] = [];
+  isLoading: boolean = false;
 
   constructor(private readonly http: HttpClient) { }
   ngOnInit() {
@@ -711,13 +713,15 @@ export class AppComponent {
 
   async getAllItems() {
     try {
+      this.isLoading = true;
       this.sampleData = [];
       var header = {
         headers: new HttpHeaders()
           .set('Authorization', `Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjQxIiwiVXNlck5hbWUiOiJPTiIsImV4cCI6MTc1NjQ0MTUwNCwiaXNzIjoiQUpFIiwiYXVkIjoiQUpFLUluZm8ifQ.dNMR28e3UklMv0qc1BupPt7jX0mcE8T1_wc0Tb-jPjY`)
       }
 
-      const response = await this.http.get('http://dev.projecttree.in/aje-api/api/SampleResult?LabId=LB&projectNum=300183&FromDate=2020-05-01T00:00:00Z&', header).toPromise();
+      const response = await this.http.get('http://dev.projecttree.in/aje-api/api/SampleResult?LabId=LB', header).toPromise();
+      this.isLoading = false;
       if (response['success']) {
         this.sampleData = response['data']
       }

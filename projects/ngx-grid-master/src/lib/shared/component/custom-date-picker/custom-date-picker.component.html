@@ -1,20 +1,42 @@
-<div class="date-picker-wrapper">
-  <div class="input-wrapper">
-    <input type="text" autofocus [value]="selectedDate || ''" (click)="toggleDatePicker()" placeholder="Select Date" />
-    <i class="icon-calendar" (click)="toggleDatePicker()"></i> <!-- Open date picker on icon click -->
-  </div>
+<div class="datepicker-wrapper">
+  <input [value]="defaultSelectedValue()" (click)="toggleDatePicker()" (keydown)="handleKeydown($event)" readonly />
 
-  <div #datePickerMenu class="date-picker-menu" *ngIf="isDatePickerOpen" (click)="$event.stopPropagation()">
-    <div class="calendar-header">
-      <button (click)="previousMonth()">&#x276E;</button>
-      <span>{{ monthNames[currentMonth] }} {{ currentYear }}</span>
-      <button (click)="nextMonth()">&#x276F;</button>
+  <div class="icon" (click)="toggleDatePicker()">📅</div>
+
+  <div *ngIf="isDatePickerOpen" class="datepicker" [ngClass]="{'append-to-body': appendToBody}">
+    <div class="header">
+      <span class="prev" (click)="navigateMonth(-1)">&#10094;</span>
+      <span (click)="toggleMonthList()">{{ currentMonthName }}</span>
+      <span (click)="toggleYearList()">{{ currentYear }}</span>
+      <span class="next" (click)="navigateMonth(1)">&#10095;</span>
     </div>
-    <div class="calendar-grid">
-      <div *ngFor="let day of daysInMonth" (click)="selectDate(day)" [class.selected]="isSelected(day)">
-        <!-- Highlight selected date -->
-        {{ day }}
+
+    <div *ngIf="showMonthList" class="month-list">
+      <div *ngFor="let month of months" (click)="selectMonth(month)">
+        {{ month }}
       </div>
     </div>
+
+    <div *ngIf="showYearList" class="year-list">
+      <div *ngFor="let year of years" (click)="selectYear(year)">
+        {{ year }}
+      </div>
+    </div>
+
+    <table *ngIf="!showMonthList && !showYearList">
+      <thead>
+        <tr>
+          <th *ngFor="let day of weekDays">{{ day }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let week of monthDays">
+          <td *ngFor="let day of week" [class.selected]="day && isSelectedDate(day)" [class.today]="isToday(day)"
+            (click)="selectDate(day)">
+            {{ day?.date }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

@@ -1,0 +1,8 @@
+<div class="viewport-container" [style.height.px]="totalItemsHeight">
+  <div class="viewport" [style.height.px]="viewportHeight">
+    <div *ngFor="let item of visibleItems; let i = index" class="virtual-item" [style.height.px]="itemSize">
+      <!-- Render each visible item -->
+      <ng-content [ngTemplateOutletContext]="{ item: item, index: startIndex + i }"></ng-content>
+    </div>
+  </div>
+</div>

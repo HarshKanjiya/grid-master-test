@@ -1,0 +1,27 @@
+<div class="custom-select-container" [class.disabled]="disabled" (click)="toggleDropdown(); $event.stopPropagation()">
+  <div class="custom-select-placeholder">
+    <span>{{ defaultSelectedValue() }}</span>
+    <button *ngIf="clearable && selectedValue.length > 0"
+      (click)="clearSelection(); $event.stopPropagation()">x</button>
+    <!-- Dropdown arrow -->
+    <span class="dropdown-arrow" [class.open]="isOpen">{{isOpen ? '▲' : '▼'}}</span>
+  </div>
+
+  <!-- This dropdown will be moved to body when open -->
+  <div class="custom-select-dropdown" *ngIf="isOpen">
+    <div *ngIf="searchable" class="search-input">
+      <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch($event)" />
+    </div>
+
+    <ul *ngIf="filteredOptions.length > 0">
+      <li *ngFor="let option of filteredOptions" (click)="selectOption(option)" [class.selected]="isSelected(option)">
+        {{ option[optionLabel] || option }}
+      </li>
+    </ul>
+
+    <!-- Show 'No record found' message if no results -->
+    <div *ngIf="filteredOptions.length === 0" class="no-record">
+      No record found
+    </div>
+  </div>
+</div>

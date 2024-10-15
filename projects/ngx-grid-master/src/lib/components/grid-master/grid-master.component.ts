@@ -4,6 +4,7 @@ import { Component, computed, input, model, signal } from '@angular/core';
 import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 import { CopyPasteDirective } from "../../directives/copyPaste.directive";
 import { DoubleClickDirective } from '../../directives/double-click.directive';
+import { VirtualScrollViewportComponent } from "../../shared/component/virtual-scroll-viewport/virtual-scroll-viewport.component";
 import { ICell, IHeaderCell } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
 
@@ -16,14 +17,14 @@ import { CellComponent } from "../cell/cell.component";
     DoubleClickDirective,
     CopyPasteDirective,
     ArrowControlDirective,
-
+    VirtualScrollViewportComponent,
     CellComponent
   ],
   templateUrl: './grid-master.component.html',
   styleUrls: ['./grid-master.component.css', "./classes.css"]
 })
 export class GridMaster {
-  isLoading = signal<boolean>(true);
+  /* @Input() isLoading: boolean = false; */
 
   cellHeight = input<number>(20);
   cellWidth = input<number>(100);
@@ -75,8 +76,11 @@ export class GridMaster {
       }))
     }
     this.data.set(_temp);
-    this.isLoading.set(false);
   }
+
+  /* ngOnChanges(changes: SimpleChanges) {
+    this.isLoading = changes['isLoading'].currentValue;
+  } */
 
   onRowSelect(rowIndex: number) {
     this.selectedRow = rowIndex;
@@ -202,7 +206,7 @@ export class GridMaster {
   }
 
   selectCell(cell: ICell) {
-    this.selectedCell = cell
+    this.selectedCell = cell;
   }
 
   onArrowDown() {

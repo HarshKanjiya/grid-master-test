@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { CustomDatePickerComponent } from './custom-date-picker.component';
+import { VirtualScrollViewportComponent } from './virtual-scroll-viewport.component';
 
-describe('CustomDatePickerComponent', () => {
-  let component: CustomDatePickerComponent;
-  let fixture: ComponentFixture<CustomDatePickerComponent>;
+describe('VirtualScrollViewportComponent', () => {
+  let component: VirtualScrollViewportComponent;
+  let fixture: ComponentFixture<VirtualScrollViewportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomDatePickerComponent ]
+      declarations: [ VirtualScrollViewportComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CustomDatePickerComponent);
+    fixture = TestBed.createComponent(VirtualScrollViewportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
