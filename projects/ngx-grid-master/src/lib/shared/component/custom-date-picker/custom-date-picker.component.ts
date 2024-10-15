@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, Input, model, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, HostListener, Input, model, OnInit, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -15,6 +15,7 @@ export class CustomDatepickerComponent implements OnInit {
   @Input() appendToBody: boolean = true; // Option to append to body
 
   model = model<any>(); // bind value
+  @ViewChild('wrapper') wrapper!: ElementRef<HTMLDivElement>;
 
   @Output() selectedDateChange: EventEmitter<Date> = new EventEmitter<Date>();
 
@@ -35,6 +36,15 @@ export class CustomDatepickerComponent implements OnInit {
     if (!_value) return '';
     return this.formatDate(new Date(_value), this.dateFormat);
   })
+
+  constructor(private elementRef: ElementRef) { }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (!this.wrapper.nativeElement.contains(event.target as Node)){
+      this.isDatePickerOpen = this.showMonthList = this.showYearList = false;
+    }
+  }
 
   ngOnInit(): void {
     this.updateCalendar();

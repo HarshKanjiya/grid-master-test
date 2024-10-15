@@ -1,4 +1,4 @@
-<div class="datepicker-wrapper">
+<div class="datepicker-wrapper" #wrapper>
   <input [value]="defaultSelectedValue()" (click)="toggleDatePicker()" (keydown)="handleKeydown($event)" readonly />
 
   <div class="icon" (click)="toggleDatePicker()">📅</div>

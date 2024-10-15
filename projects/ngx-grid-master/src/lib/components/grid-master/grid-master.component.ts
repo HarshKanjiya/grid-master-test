@@ -8,6 +8,7 @@ import { VirtualScrollViewportComponent } from "../../shared/component/virtual-s
 import { ICell, IHeaderCell } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
 import { CommonService } from "../../shared/services/common.service";
+import { HeaderCellComponent } from "../header-cell/header-cell.component";
 
 @Component({
   selector: 'grid-master',
@@ -19,7 +20,8 @@ import { CommonService } from "../../shared/services/common.service";
     CopyPasteDirective,
     ArrowControlDirective,
     VirtualScrollViewportComponent,
-    CellComponent
+    CellComponent,
+    HeaderCellComponent
   ],
   templateUrl: './grid-master.component.html',
   styleUrls: ['./grid-master.component.css', "./classes.css"]
@@ -44,7 +46,7 @@ export class GridMaster {
   hHeaderData = computed(() => {
     const inputData = this.horizontalHeaderData();
     if (inputData?.length > 0) return inputData;
-    else return Array.from({ length: 26 }, (_, i) => ({ label: String.fromCharCode(65 + i), width: this.cellWidth() }));
+    else return Array.from({ length: 26 }, (_, i) => ({ label: String.fromCharCode(65 + i), type: "TEXT", field: "", width: this.cellWidth() }));
   });
 
   vHeaderData = computed(() => {
@@ -189,14 +191,29 @@ export class GridMaster {
     const colIndex = this.selectionEnd()?.col ?? -1;
 
     if (rowIndex < 0 || colIndex < 0) return
-    valueArr.forEach((valRow: string[], valRowInd) => {
-      valRow.forEach((val: string, valColInd: number) => {
-        const row = valRowInd + rowIndex;
-        const col = valColInd + colIndex;
-        this.data()[row][this.horizontalHeaderData()[col].field] = val;
-        console.log({ row: row, col: col, newValue: val });
-      })
-    });
+    const start = this.selectionStart();
+    const end = this.selectionEnd();
+
+    if (start.row == end.row && start.col == end.col) {
+      // paste everything
+      valueArr.forEach((valRow: string[], valRowInd) => {
+        valRow.forEach((val: string, valColInd: number) => {
+          const row = valRowInd + rowIndex;
+          const col = valColInd + colIndex;
+          this.data()[row][this.horizontalHeaderData()[col].field] = val;
+        })
+      });
+    } else {
+      // paste in selected cells
+      valueArr.forEach((valRow: string[], valRowInd) => {
+        valRow.forEach((val: string, valColInd: number) => {
+          const row = valRowInd + rowIndex;
+          const col = valColInd + colIndex;
+          if (row > end.row || col > end.col) return
+          this.data()[row][this.horizontalHeaderData()[col].field] = val;
+        })
+      });
+    }
   }
 
   getDefaultCell(value: string): ICell {
@@ -252,6 +269,27 @@ export class GridMaster {
     const sortingData = this._commonService.sortByKey(this.data(), columnKey);
     this.data.set(sortingData);
   }
+
+
+  // header-checkbox-functions
+
+  selectDeselectAll(data: { field: string, value: boolean }): void {
+    this.data.set(
+      this.data().map((row) => {
+        row[data.field] = data.value;
+        return row
+      })
+    )
+  }
+
+  isAllSelected(field: string): boolean {
+    return this.data().every((row) => row[field])
+  }
+
+  isSomeSelected(field: string): boolean {
+    return this.data().some((row) => row[field])
+  }
+
 }
 
 

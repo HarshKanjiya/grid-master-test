@@ -7,72 +7,122 @@
 
   <div class="grid-container">
     <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
-      <table class="table" copyPaste [copyData]="cellValueString" (onPaste)="onCellPaste($event)" arrowControl
-        (arrowDown)="onArrowDown()" (arrowUp)="onArrowUp()" (arrowLeft)="onArrowLeft()" (arrowRight)="onArrowRight()">
+      <table
+        class="table"
+        copyPaste
+        [copyData]="cellValueString"
+        (onPaste)="onCellPaste($event)"
+        arrowControl
+        (arrowDown)="onArrowDown()"
+        (arrowUp)="onArrowUp()"
+        (arrowLeft)="onArrowLeft()"
+        (arrowRight)="onArrowRight()"
+      >
         @if(horizontalHeader()){
         <thead>
           <tr class="headerRow">
             @if(verticalHeader()){
-            <th class="headerCell" [style.width.px]="cellWidth()" [style.height.px]="cellHeight()"
-              [style.border-right-width.px]="1" doubleClick (onDoubleClick)="selectAll()"></th>
-            }
-            @for (cell of [].constructor(colCount()); track $index; let colIndex = $index) {
-            <th class="headerCell" [ngClass]="{ highlighted: selectedCol == colIndex }"
-              [style.border-left-width.px]="$index > 0 ? 1 : 0" [style.min-width.px]="
+            <th
+              class="headerCell"
+              [style.width.px]="cellWidth()"
+              [style.height.px]="cellHeight()"
+              [style.border-right-width.px]="1"
+              doubleClick
+              (onDoubleClick)="selectAll()"
+            ></th>
+            } @for (cell of [].constructor(colCount()); track $index; let
+            colIndex = $index) {
+            <th
+              class="headerCell"
+              [ngClass]="{ highlighted: selectedCol == colIndex }"
+              [style.border-left-width.px]="$index > 0 ? 1 : 0"
+              [style.min-width.px]="
                 hHeaderData()[colIndex] &&
                 (hHeaderData()[colIndex].width ?? cellWidth())
-              " [style.max-width.px]="
+              "
+              [style.max-width.px]="
                 hHeaderData()[colIndex] &&
                 (hHeaderData()[colIndex].width ?? cellWidth())
-              " [style.min-height.px]="cellHeight()" [style.max-height.px]="cellHeight()" doubleClick
-              (onDoubleClick)="onColumnSelect(colIndex)" [ngClass]="{
+              "
+              [style.min-height.px]="cellHeight()"
+              [style.max-height.px]="cellHeight()"
+              doubleClick
+              (onDoubleClick)="onColumnSelect(colIndex)"
+              [ngClass]="{
                 highlightedHeaderCell: selectedCol == colIndex
-              }">
-              <span class="isSorting" (click)="sortItems($index)">
-                {{
-                hHeaderData()[colIndex] && (hHeaderData()[colIndex].label ?? "")
-                }}</span>
+              }"
+            >
+              <header-cell
+                [data]="hHeaderData()[colIndex]"
+                [isSomeSelected]="isSomeSelected(hHeaderData()[colIndex].field)"
+                [isAllSelected]="isAllSelected(hHeaderData()[colIndex].field)"
+                (onSortItems)="sortItems($index)"
+                (selectDeselectAll)="selectDeselectAll($event)"
+              ></header-cell>
             </th>
             }
           </tr>
         </thead>
         }
         <tbody>
-          <tr class="row" *cdkVirtualFor="
+          <tr
+            class="row"
+            *cdkVirtualFor="
               let row of [].constructor(rowCount());
               let rowIndex = index
-            ">
+            "
+          >
             @if(verticalHeader()){
-            <th class="headerCell" [style.border-top-width.px]="1" [style.min-width.px]="cellWidth()"
-              [style.max-width.px]="cellWidth()" [style.min-height.px]="
+            <th
+              class="headerCell"
+              [style.border-top-width.px]="1"
+              [style.min-width.px]="cellWidth()"
+              [style.max-width.px]="cellWidth()"
+              [style.min-height.px]="
                 vHeaderData()[rowIndex] &&
                 (vHeaderData()[rowIndex].height ?? cellHeight())
-              " [style.max-height.px]="
+              "
+              [style.max-height.px]="
                 vHeaderData()[rowIndex] &&
                 (vHeaderData()[rowIndex].height ?? cellHeight())
-              " [ngClass]="{
+              "
+              [ngClass]="{
                 highlightedHeaderCell: selectedRow == rowIndex
-              }" doubleClick (onDoubleClick)="onRowSelect(rowIndex)">
+              }"
+              doubleClick
+              (onDoubleClick)="onRowSelect(rowIndex)"
+            >
               {{
-              vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
+                vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
               }}
             </th>
             } @for (cell of [].constructor(colCount()); track $index; let
             colIndex = $index) { @if(verticalHeader()){ }
 
-            <td class="cell" [style.border-left-width.px]="1" [style.border-top-width.px]="1" [attr.data-row]="rowIndex"
-              [attr.data-col]="colIndex" (mousedown)="onMouseDown($event, rowIndex, colIndex)"
-              (mouseenter)="onMouseEnter($event, rowIndex, colIndex)" (mouseup)="onMouseUp()"
-              [ngClass]="isSelected(rowIndex, colIndex)" (focus)="
+            <td
+              class="cell"
+              [style.border-left-width.px]="1"
+              [style.border-top-width.px]="1"
+              [attr.data-row]="rowIndex"
+              [attr.data-col]="colIndex"
+              (mousedown)="onMouseDown($event, rowIndex, colIndex)"
+              (mouseenter)="onMouseEnter($event, rowIndex, colIndex)"
+              (mouseup)="onMouseUp()"
+              [ngClass]="isSelected(rowIndex, colIndex)"
+              (focus)="
                 selectCell(
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]
                 )
-              ">
-
-              <grid-cell [(cell)]="
+              "
+            >
+              <grid-cell
+                [(cell)]="
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]
-                " (cellChange)="cellValueChange($event)" [currentCell]="horizontalHeaderData()[colIndex]"
-                [focused]="isCellSelected(rowIndex, colIndex)"></grid-cell>
+                "
+                (cellChange)="cellValueChange($event)"
+                [currentCell]="horizontalHeaderData()[colIndex]"
+                [focused]="isCellSelected(rowIndex, colIndex)"
+              ></grid-cell>
               <!-- <ng-container *ngIf="isLoading; else showData">
                 <div class="skeleton-loader"></div>
               </ng-container>
