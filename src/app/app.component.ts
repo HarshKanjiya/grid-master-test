@@ -3,11 +3,13 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Component } from '@angular/core';
 import { IRow } from '../../projects/ngx-grid-master/src/lib/types/interfaces';
 import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
-
+import { FilterPipe } from "../../projects/ngx-grid-master/src/lib/shared/pipes/filterPipe.pipe";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [GridMaster, ScrollingModule],
+  imports: [GridMaster, ScrollingModule, FilterPipe, CommonModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -118,7 +120,7 @@ export class AppComponent {
     { label: 'Hold', field: 'holds', isShow: true, isEdit: true, style: 'width: 100px' },
     { label: 'Test Description', field: 'testDesc', isShow: true, isEdit: false, style: 'width: 100px', readOnly: true },
     {
-      label: 'Result', field: 'results', isShow: true, isEdit: true, style: 'width: 100px', type: 'numeric'
+      label: 'Result', field: 'results',sortIndicator: true, isShow: true, isEdit: true, style: 'width: 100px', type: 'numeric'
     },
     {
       label: 'Result Text', field: 'resultText', isShow: true, isEdit: true, style: 'width: 130px', type: 'dropdown', options: [
@@ -621,8 +623,15 @@ export class AppComponent {
   data: IRow[] = [];
   isLoading: boolean = false;
 
+  filteredColumns = [];
+  tempColumns = [];
+
+  columnSearchTxt: string = null;
+
   constructor(private readonly http: HttpClient) { }
   ngOnInit() {
+    this.filteredColumns = JSON.parse(JSON.stringify(this.column.filter(x => !['isSelected'].includes(x.field))));
+    this.tempColumns = JSON.parse(JSON.stringify(this.column));
     // for (let rowIndex = 0; rowIndex < 20; rowIndex++) {
     //   this.data.push({
     //     cells: [
@@ -720,7 +729,7 @@ export class AppComponent {
           .set('Authorization', `Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjQxIiwiVXNlck5hbWUiOiJPTiIsImV4cCI6MTc1NjQ0MTUwNCwiaXNzIjoiQUpFIiwiYXVkIjoiQUpFLUluZm8ifQ.dNMR28e3UklMv0qc1BupPt7jX0mcE8T1_wc0Tb-jPjY`)
       }
 
-      const response = await this.http.get('http://dev.projecttree.in/aje-api/api/SampleResult?LabId=LB', header).toPromise();
+      const response = await this.http.get('http://dev.projecttree.in/aje-api/api/SampleResult?LabId=LB&fromDate=2024-04-01T00:00:00Z&', header).toPromise();
       this.isLoading = false;
       if (response['success']) {
         this.sampleData = response['data']
@@ -729,6 +738,26 @@ export class AppComponent {
       console.error(err)
     }
   }
+
+  // async saveColumnSetting() {
+  //   this.column.forEach(ele => {
+  //     const currentField = this.filteredColumns.find(x => x.field == ele.field);
+  //     if (currentField)
+  //       ele.isShow = currentField?.isShow;
+  //   });
+
+  //   // update array sequence without checkbox
+  //   this.column = [
+  //     this.column.find(col => col.field === 'isSelected'),
+
+  //     ...this.filteredColumns.map(filteredCol => {
+  //       if (filteredCol.field !== 'isSelected') {
+  //         return this.column.find(col => col.field === filteredCol.field);
+  //       }
+  //       return null;
+  //     }).filter(col => col)
+  //   ];
+  // }
 
 
   onDataChange(event: any) {

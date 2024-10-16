@@ -1,6 +1,6 @@
 import { Component, effect, input, model, output } from '@angular/core';
-import { IHeaderCell } from '../../types/interfaces';
 import { FormsModule } from '@angular/forms';
+import { IHeaderCell } from '../../types/interfaces';
 
 @Component({
   selector: 'header-cell',
@@ -26,6 +26,10 @@ export class HeaderCellComponent {
 
   onCheckboxChange() {
     this.selectDeselectAll.emit({ field: this.data().field, value: this.checkBoxModel })
+  }
+
+  sortItems() {
+    this.onSortItems.emit(this.data().field);
   }
 
   ngOnInit() {

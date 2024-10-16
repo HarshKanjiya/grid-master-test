@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, ElementRef, EventEmitter, forwardRef, HostListener, Input, model, OnInit, Output, Renderer2 } from '@angular/core';
+import { Component, computed, effect, ElementRef, EventEmitter, forwardRef, HostListener, input, Input, model, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -36,6 +36,9 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
   @Output() selectionChange: EventEmitter<any> = new EventEmitter();
   @Output() searchChange: EventEmitter<string> = new EventEmitter();
 
+  focused = input<boolean>();
+  @ViewChild('inputElement') inputElement?: ElementRef;
+
   searchTerm$ = new Subject<string>();
   filteredOptions: Array<any> = [];
   selectedValue: any[] = [];
@@ -56,6 +59,10 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
   searchQuery = '';
   dropdownSubscription!: Subscription;
 
+  focusedIndex = 0;
+
+  @ViewChild('dropdownList', { static: false }) dropdownList!: ElementRef;
+
   constructor(
     private dropdownStateService: CommonService,
     private elementRef: ElementRef,
@@ -67,6 +74,11 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
       this.searchChange.emit(searchTerm);
       this.filterOptions(searchTerm);
     });
+
+    effect(() => {
+      if (this.focused() && this.inputElement) this.inputElement.nativeElement.focus();
+      else if (!this.focused()) this.isOpen = false;
+    })
   }
 
   ngOnInit(): void {
@@ -111,6 +123,8 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
         // Notify other dropdowns to close
         this.dropdownStateService.closeAllDropdowns(this);
         this.appendDropdownToBody(); // Append dropdown to body
+        this.focusedIndex = this.defaultSelectedValue() ? this.options.indexOf(this.defaultSelectedValue()) : 0; // Reset focused index when opening dropdown
+        this.scrollToFocusedItem();
       } else {
         this.removeDropdownFromBody();
       }
@@ -134,9 +148,9 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
     this.selectionChange.emit(this.multiple ? this.selectedValue : this.selectedValue[0]);
   }
 
-  isSelected(option: any): boolean {
+  /* isSelected(option: any): boolean {
     return this.selectedValue.includes(option[this.optionValue]);
-  }
+  } */
 
   onSearch(query: string) {
     this.searchTerm$.next(query);
@@ -193,6 +207,52 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isOpen = false;
       this.removeDropdownFromBody();
+    }
+  }
+
+  // Handle keyboard events
+  handleKeydown(event: KeyboardEvent): void {
+    if (event.code === 'Space') {
+      event.preventDefault(); // Prevent scrolling
+      event.stopPropagation();
+      this.toggleDropdown(); // Open or close calendar
+    }
+
+    if (!this.isOpen) {
+      return; // If dropdown is not open, do nothing
+    }
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault(); // Prevent scrolling
+        event.stopPropagation();
+        this.focusedIndex = (this.focusedIndex + 1) % this.options.length;
+        this.scrollToFocusedItem();
+        break;
+      case 'ArrowUp':
+        event.preventDefault(); // Prevent scrolling
+        event.stopPropagation();
+        this.focusedIndex = (this.focusedIndex - 1 + this.options.length) % this.options.length;
+        this.scrollToFocusedItem();
+        break;
+      case 'Enter':
+        event.preventDefault(); // Prevent scrolling
+        event.stopPropagation();
+        this.selectOption(this.options[this.focusedIndex]);
+        break;
+      case 'Escape':
+        event.preventDefault(); // Prevent scrolling
+        event.stopPropagation();
+        this.isOpen = false; // Close dropdown on Escape
+        break;
+      default:
+        break;
+    }
+  }
+
+  scrollToFocusedItem() {
+    const focusedItem = document.querySelector('.dropdown-list .focused');
+    if (focusedItem) {
+      focusedItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }
 }

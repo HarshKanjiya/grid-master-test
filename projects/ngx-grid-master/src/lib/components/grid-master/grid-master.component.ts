@@ -1,13 +1,13 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, model, signal } from '@angular/core';
+import { Component, computed, HostListener, input, model, signal } from '@angular/core';
 import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 import { CopyPasteDirective } from "../../directives/copyPaste.directive";
 import { DoubleClickDirective } from '../../directives/double-click.directive';
 import { VirtualScrollViewportComponent } from "../../shared/component/virtual-scroll-viewport/virtual-scroll-viewport.component";
+import { CommonService } from "../../shared/services/common.service";
 import { ICell, IHeaderCell } from '../../types/interfaces';
 import { CellComponent } from "../cell/cell.component";
-import { CommonService } from "../../shared/services/common.service";
 import { HeaderCellComponent } from "../header-cell/header-cell.component";
 
 @Component({
@@ -68,7 +68,14 @@ export class GridMaster {
 
   selectedCell: ICell | null = null;
 
-  constructor(private _commonService: CommonService) { }
+  /* changes: { row: number, col: number, value: any }[] = [];
+  changesIndex: number = 0; */
+  // History stacks
+  history: any[][][] = [];
+  future: any[][][] = [];
+
+  constructor(private _commonService: CommonService) {
+  }
 
   ngOnInit(): void {
     let _temp = this.data();
@@ -198,8 +205,10 @@ export class GridMaster {
       // paste everything
       valueArr.forEach((valRow: string[], valRowInd) => {
         valRow.forEach((val: string, valColInd: number) => {
-          const row = valRowInd + rowIndex;
-          const col = valColInd + colIndex;
+          const row = valRowInd + start.row;
+          const col = valColInd + start.col;
+          const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          console.log(emitObject);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
         })
       });
@@ -207,9 +216,11 @@ export class GridMaster {
       // paste in selected cells
       valueArr.forEach((valRow: string[], valRowInd) => {
         valRow.forEach((val: string, valColInd: number) => {
-          const row = valRowInd + rowIndex;
-          const col = valColInd + colIndex;
+          const row = valRowInd + start.row;
+          const col = valColInd + start.col;
           if (row > end.row || col > end.col) return
+          const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          console.log(emitObject);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
         })
       });
@@ -259,9 +270,78 @@ export class GridMaster {
     this.selectionEnd.set({ row: row, col: newCol })
   }
 
-  cellValueChange(e: any) {
-    const obj = { row: this.selectedCells[0].row, col: this.selectedCells[0].col, newValue: e };
+  cellValueChange(newValue: any, rowIndex: number, colIndex: number) {
+    const obj = { row: rowIndex, col: colIndex, newValue: newValue };
+
+    /* if (this.changesIndex < this.changes.length) {
+      if (this.changesIndex) {
+        this.changes.splice(this.changesIndex, this.changes.length - this.changesIndex - 1)
+      }
+    }
+    this.changes.push(JSON.parse(JSON.stringify(obj)));
+    console.log("changes", this.changes);
+
+    this.changesIndex = this.changes.length - 1; */
+    // Save the current state to history and clear future stack
+    this.saveHistory(obj);
+    this.future = []; // Clear redo stack when a new edit is made
     console.log(obj);
+  }
+
+  // Save the current state to the history stack
+  saveHistory(params) {
+    // Create a deep copy of the data and push it to the history stack
+    this.history.push(JSON.parse(JSON.stringify(params)));
+  }
+
+  // Undo functionality
+  undo() {
+    if (this.history.length > 1) {
+      // Pop the current state to future stack and restore the last state from history
+      const lastState = this.history.pop();
+      if (lastState) this.future.push(lastState);
+      const { row, col, newValue } = JSON.parse(JSON.stringify(this.history[this.history.length - 1]))
+      this.data()[row][this.horizontalHeaderData()[col].field] = newValue;
+    }
+  }
+
+  // Redo functionality
+  redo() {
+    if (this.future.length > 0) {
+      // Pop the last future state and restore it
+      const nextState = this.future.pop();
+      if (nextState) {
+        this.saveHistory(nextState); // Save current state before redo        
+        const { row, col, newValue } = JSON.parse(JSON.stringify(nextState));
+        this.data()[row][this.horizontalHeaderData()[col].field] = newValue;
+        /* this.data = JSON.parse(JSON.stringify(nextState)); */
+      }
+    }
+  }
+
+  // Check if undo is possible
+  canUndo() {
+    return this.history.length > 1;
+  }
+
+  // Check if redo is possible
+  canRedo() {
+    return this.future.length > 0;
+  }
+
+  // Handle keyboard events for undo/redo
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      // Ctrl+Z (or Cmd+Z on Mac) for undo
+      event.preventDefault();  // Prevent default browser undo behavior
+      this.undo();
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+      // Ctrl+Y (or Cmd+Y on Mac) for redo
+      event.preventDefault();  // Prevent default browser redo behavior
+      this.redo();
+    }
   }
 
   sortItems(cellIndex) {
@@ -269,7 +349,6 @@ export class GridMaster {
     const sortingData = this._commonService.sortByKey(this.data(), columnKey);
     this.data.set(sortingData);
   }
-
 
   // header-checkbox-functions
 

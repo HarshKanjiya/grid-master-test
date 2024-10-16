@@ -19,7 +19,7 @@ export class CellComponent {
   currentCell = input<IHeaderCell>();
   focused = input<boolean>();
 
-  currentValue: any = null;
+  currentValue: any = '';
 
   constructor() {
     effect(() => {

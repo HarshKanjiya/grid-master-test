@@ -1,75 +1,144 @@
 .datepicker-wrapper {
     position: relative;
+    display: inline-block;
+    width: 100%;
 
     input {
-        width: 200px;
-        padding: 5px;
+        width: 100%;
+        padding: 6px;
         border: transparent;
+        border-radius: 4px;
         outline: none;
-        background: transparent;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;        
     }
 
     .icon {
         position: absolute;
-        right: 10px;
-        top: 5px;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
         cursor: pointer;
+        font-size: 16px;
     }
 
     .datepicker {
         position: absolute;
+        z-index: 999;
         background-color: white;
-        border: 1px solid #ccc;
-        z-index: 1000;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         padding: 10px;
-    }
+        margin-top: 8px;
+        min-width: 250px;
+        max-height: 300px;
+        overflow: auto;
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
 
-        .prev,
-        .next {
-            cursor: pointer;
-        }
-    }
+            span {
+                font-size: 16px;
+                font-weight: 500;
+                color: #555;
+            }
 
-    .month-list,
-    .year-list {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        cursor: pointer;
-    }
+            .prev,
+            .next {
+                font-size: 20px;
+                cursor: pointer;
+                color: #555;
+                padding: 5px;
+                transition: color 0.2s ease;
 
-    table {
-        width: 100%;
-
-        thead {
-            th {
-                text-align: center;
-                font-weight: bold;
+                &:hover {
+                    color: #1976d2;
+                }
             }
         }
 
-        td {
-            text-align: center;
-            cursor: pointer;
+        .month-list,
+        .year-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 10px;
+
+            div {
+                padding: 10px;
+                text-align: center;
+                font-size: 14px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                color: #555;
+
+                &:hover {
+                    background-color: #f0f0f0;
+                }
+
+                &.selected {
+                    background-color: #1976d2;
+                    color: white;
+                    border: 1px solid #1976d2;
+                    border-radius: 8px;
+                }
+
+                &.today {
+                    border: 1px solid #1976d2;
+                    border-radius: 8px;
+                    color: #1976d2;
+                }
+
+                &.active {
+                    background-color: #e3f2fd;
+                    border: 1px solid #1976d2;
+                }
+            }
         }
 
-        .selected {
-            background-color: lightblue;
-            /* Example highlight color */
-            font-weight: bold;
-            color: white;
-        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
 
-        .today {
-            background: #28a745;
-            /* Highlight color for today's date */
-            color: white;
-            /* Text color for today's date */
-        }
+            th,
+            td {
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+                vertical-align: middle;
+            }
 
+            th {
+                font-size: 14px;
+                color: #999;
+                padding-bottom: 10px;
+            }
+
+            td {
+                font-size: 14px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+
+                &.today {
+                    color: #1976d2;
+                    border: 1px solid #1976d2;
+                    border-radius: 50%;
+                }
+
+                &.selected {
+                    background-color: #1976d2;
+                    color: white;
+                    border-radius: 50%;
+                }
+
+                &:hover {
+                    background-color: #f0f0f0;
+                    border-radius: 50%;
+                }
+            }
+        }
     }
 }

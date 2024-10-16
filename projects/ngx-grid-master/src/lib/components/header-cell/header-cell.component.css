@@ -5,3 +5,7 @@
   gap: 0.7rem;
   flex-wrap: wrap;
 }
+
+.sort-link:hover {
+  text-decoration: underline;
+}

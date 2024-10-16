@@ -1,2 +1,23 @@
+<!-- <input class="border-round-3xl w-full" pInputText type="text" placeholder="Search Column" [(ngModel)]="columnSearchTxt">
+
+<div style="display: flex;
+align-items: center;
+gap: 1rem;
+flex-wrap: wrap;">
+  @for (item of filteredColumns| filter: columnSearchTxt; track $index) {
+  <div class="flex justify-content-between p-2 align-items-center gap-3 cursor-pointer">
+    <div class="flex align-items-center gap-3" (click)="item.isShow = !item.isShow">
+      <span>{{ item.label }}</span>
+    </div>
+
+    <div class="flex align-items-center gap-3">
+      <i class="pi {{item.isShow ? 'pi-eye':'pi-eye-slash'}}"></i>
+    </div>
+  </div>
+  }
+</div>
+
+<button type="button" (click)="saveColumnSetting()">Save</button> -->
+
 <grid-master [horizontalHeader]="true" [verticalHeader]="true" [allowStyling]="false" [data]="sampleData"
   [horizontalHeaderData]="column" (dataChange)="onDataChange($event)"></grid-master>

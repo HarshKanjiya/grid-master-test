@@ -27,7 +27,7 @@ export interface IHeaderCell {
   field: string;
   type?: string;
   options?: Array<any>;
-  sorting?: boolean,
+  sortIndicator?: boolean,
   height?: number,
   width?: number,
   func?: () => any

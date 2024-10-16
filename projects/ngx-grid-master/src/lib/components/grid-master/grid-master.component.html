@@ -76,8 +76,8 @@
             <th
               class="headerCell"
               [style.border-top-width.px]="1"
-              [style.min-width.px]="cellWidth()"
-              [style.max-width.px]="cellWidth()"
+              [style.min-width.px]="50"
+              [style.max-width.px]="50"
               [style.min-height.px]="
                 vHeaderData()[rowIndex] &&
                 (vHeaderData()[rowIndex].height ?? cellHeight())
@@ -119,7 +119,7 @@
                 [(cell)]="
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]
                 "
-                (cellChange)="cellValueChange($event)"
+                (cellChange)="cellValueChange($event, rowIndex,colIndex)"
                 [currentCell]="horizontalHeaderData()[colIndex]"
                 [focused]="isCellSelected(rowIndex, colIndex)"
               ></grid-cell>

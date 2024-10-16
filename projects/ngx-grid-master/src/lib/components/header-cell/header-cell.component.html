@@ -2,18 +2,17 @@
 <!--  -->
 @case ("checkbox") {
 <span class="checkbox-wrapper">
-  <input
-    type="checkbox"
-    id="cbox{{ data().label }}"
-    [(ngModel)]="checkBoxModel"
-    [indeterminate]="!checkBoxModel ? isSomeSelected() : false"
-    (change)="onCheckboxChange()"
-  />
+  <input type="checkbox" id="cbox{{ data().label }}" [(ngModel)]="checkBoxModel"
+    [indeterminate]="!checkBoxModel ? isSomeSelected() : false" (change)="onCheckboxChange()" />
   <label for="cbox{{ data().label }}">{{ data().label }}</label>
 </span>
 
 <!--  -->
 } @default {
-<p>{{ data().label }}</p>
+@if (data().sortIndicator) {
+<span (click)="sortItems()" class="sort-link">{{ data().label }}</span>
+} @else{
+<span>{{ data().label }}</span>
+}
 
 } }

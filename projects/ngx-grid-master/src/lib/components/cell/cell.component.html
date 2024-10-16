@@ -1,11 +1,12 @@
 <p>
   @switch (currentCell()?.type) { @case ("date"){
-  <app-custom-datepicker [(model)]="currentValue" [dateFormat]="'yyyy-MM-dd'" (selectedDateChange)="saveValue($event)">
+  <app-custom-datepicker [focused]="focused()" [(model)]="currentValue" [dateFormat]="'yyyy-MM-dd'"
+    (selectedDateChange)="saveValue($event)">
   </app-custom-datepicker>
 
   } @case ("dropdown"){
 
-  <app-select [(model)]="currentValue" [options]="currentCell()?.options || []"
+  <app-select [focused]="focused()" [(model)]="currentValue" [options]="currentCell()?.options || []"
     (selectionChange)="saveValue($event)"></app-select>
 
   } @case ("checkbox"){

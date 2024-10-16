@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, HostListener, Input, model, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, EventEmitter, HostListener, input, Input, model, OnInit, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -15,8 +15,10 @@ export class CustomDatepickerComponent implements OnInit {
   @Input() appendToBody: boolean = true; // Option to append to body
 
   model = model<any>(); // bind value
-  @ViewChild('wrapper') wrapper!: ElementRef<HTMLDivElement>;
 
+  focused = input<boolean>();
+  @ViewChild('wrapper') wrapper!: ElementRef<HTMLDivElement>;
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() selectedDateChange: EventEmitter<Date> = new EventEmitter<Date>();
 
   currentDate = new Date();
@@ -37,11 +39,16 @@ export class CustomDatepickerComponent implements OnInit {
     return this.formatDate(new Date(_value), this.dateFormat);
   })
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) {
+    effect(() => {
+      if (this.focused() && this.inputElement) this.inputElement.nativeElement.focus();
+      else if (!this.focused()) this.isDatePickerOpen = this.showMonthList = this.showYearList = false;
+    })
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
-    if (!this.wrapper.nativeElement.contains(event.target as Node)){
+    if (!this.wrapper.nativeElement.contains(event.target as Node)) {
       this.isDatePickerOpen = this.showMonthList = this.showYearList = false;
     }
   }
@@ -99,7 +106,7 @@ export class CustomDatepickerComponent implements OnInit {
   }
 
   isSelectedDate(day: any): boolean {
-    return day && this.selectedDate?.getDate() === day.date && this.selectedDate?.getMonth() === this.currentMonth;
+    return day && new Date(this.defaultSelectedValue())?.getDate() === day.date && new Date(this.defaultSelectedValue())?.getMonth() === this.currentMonth;
   }
 
   isToday(day: any): boolean {
@@ -177,7 +184,14 @@ export class CustomDatepickerComponent implements OnInit {
   handleKeydown(event: KeyboardEvent): void {
     if (event.code === 'Space') {
       event.preventDefault(); // Prevent scrolling
+      event.stopPropagation();
       this.toggleDatePicker(); // Open or close calendar
+    }
+
+    if (event.code === 'Escape') {
+      event.preventDefault(); // Prevent scrolling
+      event.stopPropagation();
+      this.isDatePickerOpen = false; // close calendar
     }
   }
 

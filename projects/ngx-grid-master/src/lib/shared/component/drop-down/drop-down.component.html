@@ -1,20 +1,24 @@
-<div class="custom-select-container" [class.disabled]="disabled" (click)="toggleDropdown(); $event.stopPropagation()">
-  <div class="custom-select-placeholder">
-    <span>{{ defaultSelectedValue() }}</span>
-    <button *ngIf="clearable && selectedValue.length > 0"
-      (click)="clearSelection(); $event.stopPropagation()">x</button>
-    <!-- Dropdown arrow -->
-    <span class="dropdown-arrow" [class.open]="isOpen">{{isOpen ? '▲' : '▼'}}</span>
+<div class="main-content">
+  <input readonly class="custom-select-container" #inputElement (click)="toggleDropdown(); $event.stopPropagation()"
+    [value]="defaultSelectedValue()" (keydown)="handleKeydown($event)" tabindex="0" />
+  <!-- <span>{{ defaultSelectedValue() }}</span> -->
+  <!-- </inout> -->
+  <div class="custom-select-placeholder" *ngIf="clearable && selectedValue.length > 0">
+    <button (click)="clearSelection(); $event.stopPropagation()">x</button>
   </div>
+  <!-- Dropdown arrow -->
+  <span class="dropdown-arrow" [class.open]="isOpen">{{isOpen ? '▲' : '▼'}}</span>
 
   <!-- This dropdown will be moved to body when open -->
-  <div class="custom-select-dropdown" *ngIf="isOpen">
+  <div class="custom-select-dropdown" *ngIf="isOpen" #dropdownList>
     <div *ngIf="searchable" class="search-input">
       <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch($event)" />
     </div>
 
-    <ul *ngIf="filteredOptions.length > 0">
-      <li *ngFor="let option of filteredOptions" (click)="selectOption(option)" [class.selected]="isSelected(option)">
+    <ul *ngIf="filteredOptions.length > 0" class="dropdown-list">
+      <!-- [class.selected]="isSelected(option)" -->
+      <li *ngFor="let option of filteredOptions; let i =index" (click)="selectOption(option)"
+        [class.focused]="i === focusedIndex" (mouseenter)="focusedIndex = i">
         {{ option[optionLabel] || option }}
       </li>
     </ul>
