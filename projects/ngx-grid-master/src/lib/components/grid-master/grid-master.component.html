@@ -20,16 +20,16 @@
       >
       <colgroup>
         <col style="width: 50px;">
-        <col *ngFor="let col of colGroups" 
+        <col *ngFor="let col of colGroups"
              [style.min-width.px]="col.width">
       </colgroup>
-      
+
         @if(horizontalHeader()){
         <thead>
           <tr class="headerRow">
             @if(verticalHeader()){
             <th
-              class="headerCell"              
+              class="headerCell"
               [style.height.px]="cellHeight()"
               [style.border-right-width.px]="1"
               doubleClick
@@ -40,7 +40,7 @@
             <th
               class="headerCell"
               [ngClass]="{ highlighted: selectedCol == colIndex }"
-              [style.border-left-width.px]="$index > 0 ? 1 : 0"              
+              [style.border-left-width.px]="$index > 0 ? 1 : 0"
               [style.min-height.px]="cellHeight()"
               [style.max-height.px]="cellHeight()"
               doubleClick
@@ -95,10 +95,10 @@
             </th>
             }
             <!--  -->
-            
+
             @if(isLoading()){
-              @for (cell of [].constructor(colCount()); track $index; let colIndex = $index) { 
-                <td 
+              @for (cell of [].constructor(colCount()); track $index; let colIndex = $index) {
+                <td
                 class="cell"
                 [style.border-left-width.px]="1"
                 [style.border-top-width.px]="1"
@@ -133,7 +133,7 @@
                   data()[rowIndex][horizontalHeaderData()[colIndex].field]"
                 [currentCell]="horizontalHeaderData()[colIndex]"
                 [focused]="isCellSelected(rowIndex, colIndex)"
-                (onchange)="saveHistory({row:rowIndex, col:colIndex, oldValue: $event?.oldValue, new: $event.newValue })"
+                (onchange)="saveHistory({row:rowIndex, col:colIndex, oldValue: $event?.oldValue, newValue: $event.newValue })"
               ></grid-cell>
               <!-- <ng-container *ngIf="isLoading; else showData">
                 <div class="skeleton-loader"></div>
@@ -148,7 +148,7 @@
             </td>
             }
             }
-            
+
           </tr>
         </tbody>
       </table>

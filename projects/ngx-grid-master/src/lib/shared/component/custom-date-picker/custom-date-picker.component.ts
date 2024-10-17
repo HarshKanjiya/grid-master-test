@@ -36,7 +36,10 @@ export class CustomDatepickerComponent implements OnInit {
   defaultSelectedValue = computed(() => {
     const _value = this.model();
     if (!_value) return '';
-    return this.formatDate(new Date(_value), this.dateFormat);
+    let date = new Date(_value);
+    this.currentMonth = date.getMonth();
+    this.currentYear = date.getFullYear();
+    return this.formatDate(date, this.dateFormat);
   })
 
   constructor(private elementRef: ElementRef) {
@@ -63,7 +66,14 @@ export class CustomDatepickerComponent implements OnInit {
   // }
 
   get monthDays() {
-    return this.getCalendarDays(this.currentYear, this.currentMonth);
+    let year = this.currentYear;
+    let month = this.currentMonth;
+    if(this.defaultSelectedValue()){
+      let date = new Date(this.defaultSelectedValue());
+      year = date.getFullYear();
+      month = date.getMonth();
+    }
+    return this.getCalendarDays(year, month);
   }
 
   get currentMonthName(): string {

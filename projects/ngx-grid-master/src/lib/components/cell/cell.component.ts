@@ -34,6 +34,7 @@ export class CellComponent {
   ngOnInit() { }
 
   saveValue(changedValue: any) {
+    if ((!this.oldValue && !changedValue) || (this.oldValue == changedValue)) return
     this.cell.set(changedValue);
     this.onchange.emit({ oldValue: this.oldValue, newValue: changedValue })
   }

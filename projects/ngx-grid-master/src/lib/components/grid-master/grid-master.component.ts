@@ -75,8 +75,8 @@ export class GridMaster {
   /* changes: { row: number, col: number, value: any }[] = [];
   changesIndex: number = 0; */
   // History stacks
-  history: any[][][] = [];
-  future: any[][][] = [];
+  undoStack: any[][] = [];
+  redoStack: any[][] = [];
 
   constructor(private _commonService: CommonService) {
   }
@@ -199,12 +199,12 @@ export class GridMaster {
 
     let valueArr: string[][] = pastedData.split(/\r?\n/).map((row: string) => row.split("\t"));
 
-    const rowIndex = this.selectionStart()?.row ?? -1;
-    const colIndex = this.selectionEnd()?.col ?? -1;
-
-    if (rowIndex < 0 || colIndex < 0) return
     const start = this.selectionStart();
     const end = this.selectionEnd();
+
+    if ((start.row ?? -1) < 0 || (end.col ?? -1) < 0) return
+
+    let slice = [];
 
     if (start.row == end.row && start.col == end.col) {
       // paste everything
@@ -212,9 +212,9 @@ export class GridMaster {
         valRow.forEach((val: string, valColInd: number) => {
           const row = valRowInd + start.row;
           const col = valColInd + start.col;
-          const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          const history = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          slice.push(history);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
-          this.saveHistory(emitObject);
         })
       });
     } else {
@@ -224,12 +224,17 @@ export class GridMaster {
           const row = valRowInd + start.row;
           const col = valColInd + start.col;
           if (row > end.row || col > end.col) return
-          const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          const history = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
+          slice.push(history);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
-          this.saveHistory(emitObject);
         })
       });
     }
+
+    this.undoStack.push(slice);
+    this.redoStack = [];
+
+    this.selectionEnd.set({ row: slice.pop().row, col: slice.pop().col })
   }
 
   getDefaultCell(value: string): ICell {
@@ -289,43 +294,50 @@ export class GridMaster {
     this.changesIndex = this.changes.length - 1; */
     // Save the current state to history and clear future stack
     this.saveHistory(obj);
-    this.future = []; // Clear redo stack when a new edit is made
+    this.redoStack = []; // Clear redo stack when a new edit is made
     console.log(obj);
   }
 
   //#region undo redo
   saveHistory(params) {
-    this.history.push(JSON.parse(JSON.stringify(params)));
+    this.undoStack.push(params);
+    this.redoStack = [];
   }
 
   undo() {
-    if (this.history.length > 0) {
-      const lastState = this.history.pop();
-      if (lastState) this.future.push(lastState);
-      const { row, col, oldValue, newValue } = JSON.parse(JSON.stringify(this.history[this.history.length - 1]))
-      /* this.data()[row][this.horizontalHeaderData()[col].field] = oldValue; */
-      this.setDataAtCell(row, col, oldValue);
-    }
-  }
-
-  redo() {
-    if (this.future.length > 0) {
-      const nextState = this.future.pop();
-      if (nextState) {
-        this.saveHistory(nextState); // Save current state before redo        
-        const { row, col, newValue } = JSON.parse(JSON.stringify(nextState));
-        /* this.data()[row][this.horizontalHeaderData()[col].field] = newValue; */
-        this.setDataAtCell(row, col, newValue);
+    if (this.undoStack?.length) {
+      const lastState = this.undoStack.pop();
+      if (lastState.length) {
+        this.redoStack.push(lastState);
+        this.setUndoRedoData("UNDO", lastState);
       }
     }
   }
 
+  redo() {
+    if (this.redoStack?.length) {
+      const nextState = this.redoStack.pop();
+      if (nextState.length) {
+        this.undoStack.push(nextState);
+        this.setUndoRedoData("REDO", nextState);
+      }
+    }
+  }
+
+  setUndoRedoData(type: "UNDO" | "REDO", slice: { row: number, col: number, oldValue: any, newValue: any }[]) {
+    slice.forEach((change) => {
+      this.setDataAtCell(change.row, change.col, type == "UNDO" ? change.oldValue : change.newValue);
+    })
+    this.selectionStart.set({ row: slice[0].row, col: slice[0].col })
+    this.selectionEnd.set({ row: slice[slice.length - 1].row, col: slice[slice.length - 1].col })
+  }
+
   canUndo() {
-    return this.history.length > 1;
+    return this.undoStack.length > 1;
   }
 
   canRedo() {
-    return this.future.length > 0;
+    return this.redoStack.length > 0;
   }
 
   //#endregion
@@ -378,7 +390,7 @@ export class GridMaster {
     return this.data().some((row) => row[field])
   }
 
-  //#region randomly column width set base on data 
+  //#region randomly column width set base on data
   calculateColumnWidths(): void {
     const baseWidthPerChar = 15;
     const minDateFieldWidth = 120;
@@ -406,7 +418,7 @@ export class GridMaster {
     });
   }
 
-  setDataAtCell(rowIndex, colIndex, value) {    
+  setDataAtCell(rowIndex, colIndex, value) {
     this.data()[rowIndex][this.horizontalHeaderData()[colIndex].field] = value;
   }
 }
