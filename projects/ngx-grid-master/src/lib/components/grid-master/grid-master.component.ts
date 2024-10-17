@@ -1,6 +1,6 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from '@angular/common';
-import { Component, computed, HostListener, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, input, model, signal } from '@angular/core';
 import { ArrowControlDirective } from "../../directives/arrow-control.directive";
 import { CopyPasteDirective } from "../../directives/copyPaste.directive";
 import { DoubleClickDirective } from '../../directives/double-click.directive';
@@ -24,10 +24,11 @@ import { HeaderCellComponent } from "../header-cell/header-cell.component";
     HeaderCellComponent
   ],
   templateUrl: './grid-master.component.html',
-  styleUrls: ['./grid-master.component.css', "./classes.css"]
+  styleUrls: ['./grid-master.component.css', "./classes.css"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GridMaster {
-  /* @Input() isLoading: boolean = false; */
+  isLoading = input<boolean>(false);
 
   cellHeight = input<number>(20);
   cellWidth = input<number>(100);
@@ -68,6 +69,9 @@ export class GridMaster {
 
   selectedCell: ICell | null = null;
 
+  private sortOrders: { [key: string]: 'asc' | 'desc' } = {}; // Store sort order for each column
+  colGroups = [];
+
   /* changes: { row: number, col: number, value: any }[] = [];
   changesIndex: number = 0; */
   // History stacks
@@ -86,6 +90,7 @@ export class GridMaster {
       }))
     }
     this.data.set(_temp);
+    this.calculateColumnWidths();
   }
 
   /* ngOnChanges(changes: SimpleChanges) {
@@ -208,8 +213,8 @@ export class GridMaster {
           const row = valRowInd + start.row;
           const col = valColInd + start.col;
           const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
-          console.log(emitObject);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
+          this.saveHistory(emitObject);
         })
       });
     } else {
@@ -220,8 +225,8 @@ export class GridMaster {
           const col = valColInd + start.col;
           if (row > end.row || col > end.col) return
           const emitObject = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
-          console.log(emitObject);
           this.data()[row][this.horizontalHeaderData()[col].field] = val;
+          this.saveHistory(emitObject);
         })
       });
     }
@@ -288,46 +293,42 @@ export class GridMaster {
     console.log(obj);
   }
 
-  // Save the current state to the history stack
+  //#region undo redo
   saveHistory(params) {
-    // Create a deep copy of the data and push it to the history stack
     this.history.push(JSON.parse(JSON.stringify(params)));
   }
 
-  // Undo functionality
   undo() {
-    if (this.history.length > 1) {
-      // Pop the current state to future stack and restore the last state from history
+    if (this.history.length > 0) {
       const lastState = this.history.pop();
       if (lastState) this.future.push(lastState);
-      const { row, col, newValue } = JSON.parse(JSON.stringify(this.history[this.history.length - 1]))
-      this.data()[row][this.horizontalHeaderData()[col].field] = newValue;
+      const { row, col, oldValue, newValue } = JSON.parse(JSON.stringify(this.history[this.history.length - 1]))
+      /* this.data()[row][this.horizontalHeaderData()[col].field] = oldValue; */
+      this.setDataAtCell(row, col, oldValue);
     }
   }
 
-  // Redo functionality
   redo() {
     if (this.future.length > 0) {
-      // Pop the last future state and restore it
       const nextState = this.future.pop();
       if (nextState) {
         this.saveHistory(nextState); // Save current state before redo        
         const { row, col, newValue } = JSON.parse(JSON.stringify(nextState));
-        this.data()[row][this.horizontalHeaderData()[col].field] = newValue;
-        /* this.data = JSON.parse(JSON.stringify(nextState)); */
+        /* this.data()[row][this.horizontalHeaderData()[col].field] = newValue; */
+        this.setDataAtCell(row, col, newValue);
       }
     }
   }
 
-  // Check if undo is possible
   canUndo() {
     return this.history.length > 1;
   }
 
-  // Check if redo is possible
   canRedo() {
     return this.future.length > 0;
   }
+
+  //#endregion
 
   // Handle keyboard events for undo/redo
   @HostListener('window:keydown', ['$event'])
@@ -344,11 +345,19 @@ export class GridMaster {
     }
   }
 
+  //#region column wise sorting
   sortItems(cellIndex) {
     const columnKey = this.horizontalHeaderData()[cellIndex].field;
-    const sortingData = this._commonService.sortByKey(this.data(), columnKey);
+    if (!this.sortOrders[columnKey]) {
+      this.sortOrders[columnKey] = 'asc';
+    }
+
+    this.sortOrders[columnKey] = this.sortOrders[columnKey] === 'asc' ? 'desc' : 'asc';
+
+    const sortingData = this._commonService.sortByKey(this.data(), columnKey, this.sortOrders[columnKey]);
     this.data.set(sortingData);
   }
+  //#endregion
 
   // header-checkbox-functions
 
@@ -369,6 +378,37 @@ export class GridMaster {
     return this.data().some((row) => row[field])
   }
 
+  //#region randomly column width set base on data 
+  calculateColumnWidths(): void {
+    const baseWidthPerChar = 15;
+    const minDateFieldWidth = 120;
+
+    this.colGroups = this.horizontalHeaderData().map(col => {
+      // Calculate the maximum length of content in the column
+      const maxLength = Math.max(
+        ...this.data().map(row => String(row[col.field]).length),
+        col.label.length
+      );
+
+      // If the column is a date field, apply the minimum width of 100px
+      let width = maxLength * baseWidthPerChar;
+
+      // Check if the column is a date field
+      const regex = /\bdate\b/i;
+      if (regex.test(col.type)) {
+        width = Math.max(minDateFieldWidth, width);
+      }
+
+      // Return the width for each column
+      return {
+        width: width
+      };
+    });
+  }
+
+  setDataAtCell(rowIndex, colIndex, value) {    
+    this.data()[rowIndex][this.horizontalHeaderData()[colIndex].field] = value;
+  }
 }
 
 

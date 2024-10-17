@@ -1,0 +1,16 @@
+<div class="viewport" #viewport style="overflow-y: auto;" [style.height.px]="viewportHeight">
+  <table class="excel-table">
+    <thead>
+      <tr>
+        <th *ngFor="let col of [].constructor(35); let colIndex = index">Column {{ colIndex + 1 }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of visibleItems(); let i = index; trackBy: trackItem" [id]="'index' + i">
+        <td *ngFor="let cell of row">{{ cell }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{{visibleItems() | json}}

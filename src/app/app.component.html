@@ -19,5 +19,7 @@ flex-wrap: wrap;">
 
 <button type="button" (click)="saveColumnSetting()">Save</button> -->
 
-<grid-master [horizontalHeader]="true" [verticalHeader]="true" [allowStyling]="false" [data]="sampleData"
-  [horizontalHeaderData]="column" (dataChange)="onDataChange($event)"></grid-master>
+<!-- <grid-master [isLoading]="isLoading" [horizontalHeader]="true" [verticalHeader]="true" [allowStyling]="false"
+  [data]="sampleData" [horizontalHeaderData]="column" (dataChange)="onDataChange($event)"></grid-master> -->
+
+<app-table></app-table>

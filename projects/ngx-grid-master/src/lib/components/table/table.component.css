@@ -1,0 +1,36 @@
+.viewport {
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: auto;
+    height: calc(100% - 200px);
+    /* Allow scrolling */
+}
+
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Collapse borders */
+    table-layout: fixed;
+    /* Ensures uniform cell width */
+}
+
+.excel-table th,
+.excel-table td {
+    border: 1px solid #ddd;
+    /* Border for table cells */
+    padding: 8px;
+    /* Padding inside cells */
+    text-align: left;
+    /* Align text to the left */
+}
+
+.excel-table th {
+    background-color: #f2f2f2;
+    /* Header background color */
+    position: sticky;
+    /* Make header sticky */
+    top: 0;
+    /* Stick to the top */
+    z-index: 10;
+    /* Bring header above other rows */
+}

@@ -6,7 +6,7 @@
   } -->
 
   <div class="grid-container">
-    <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" class="viewport">
+    <cdk-virtual-scroll-viewport [itemSize]="cellHeight()" minBufferPx="200" maxBufferPx="400" class="viewport">
       <table
         class="table"
         copyPaste
@@ -18,13 +18,18 @@
         (arrowLeft)="onArrowLeft()"
         (arrowRight)="onArrowRight()"
       >
+      <colgroup>
+        <col style="width: 50px;">
+        <col *ngFor="let col of colGroups" 
+             [style.min-width.px]="col.width">
+      </colgroup>
+      
         @if(horizontalHeader()){
         <thead>
           <tr class="headerRow">
             @if(verticalHeader()){
             <th
-              class="headerCell"
-              [style.width.px]="cellWidth()"
+              class="headerCell"              
               [style.height.px]="cellHeight()"
               [style.border-right-width.px]="1"
               doubleClick
@@ -35,15 +40,7 @@
             <th
               class="headerCell"
               [ngClass]="{ highlighted: selectedCol == colIndex }"
-              [style.border-left-width.px]="$index > 0 ? 1 : 0"
-              [style.min-width.px]="
-                hHeaderData()[colIndex] &&
-                (hHeaderData()[colIndex].width ?? cellWidth())
-              "
-              [style.max-width.px]="
-                hHeaderData()[colIndex] &&
-                (hHeaderData()[colIndex].width ?? cellWidth())
-              "
+              [style.border-left-width.px]="$index > 0 ? 1 : 0"              
               [style.min-height.px]="cellHeight()"
               [style.max-height.px]="cellHeight()"
               doubleClick
@@ -96,7 +93,22 @@
                 vHeaderData()[rowIndex] && (vHeaderData()[rowIndex].label ?? "")
               }}
             </th>
-            } @for (cell of [].constructor(colCount()); track $index; let
+            }
+            <!--  -->
+            
+            @if(isLoading()){
+              @for (cell of [].constructor(colCount()); track $index; let colIndex = $index) { 
+                <td 
+                class="cell"
+                [style.border-left-width.px]="1"
+                [style.border-top-width.px]="1"
+                [attr.data-row]="rowIndex"
+                [attr.data-col]="colIndex">
+                  <div class="skeleton-loader"></div>
+                </td>
+             }
+            } @else{
+              @for (cell of [].constructor(colCount()); track $index; let
             colIndex = $index) { @if(verticalHeader()){ }
 
             <td
@@ -115,13 +127,13 @@
                 )
               "
             >
+            <!-- (cellChange)="cellValueChange($event, rowIndex,colIndex)" -->
               <grid-cell
                 [(cell)]="
-                  data()[rowIndex][horizontalHeaderData()[colIndex].field]
-                "
-                (cellChange)="cellValueChange($event, rowIndex,colIndex)"
+                  data()[rowIndex][horizontalHeaderData()[colIndex].field]"
                 [currentCell]="horizontalHeaderData()[colIndex]"
                 [focused]="isCellSelected(rowIndex, colIndex)"
+                (onchange)="saveHistory({row:rowIndex, col:colIndex, oldValue: $event?.oldValue, new: $event.newValue })"
               ></grid-cell>
               <!-- <ng-container *ngIf="isLoading; else showData">
                 <div class="skeleton-loader"></div>
@@ -135,6 +147,8 @@
               </ng-template> -->
             </td>
             }
+            }
+            
           </tr>
         </tbody>
       </table>

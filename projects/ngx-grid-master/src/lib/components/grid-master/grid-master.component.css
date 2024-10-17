@@ -53,6 +53,8 @@
   height: 100%;
   font-family: "Figtree", sans-serif;
   font-size: 12px;
+  font-weight: 400;
+  touch-action: manipulation;
   /* padding: 1rem; */
 }
 
@@ -108,22 +110,33 @@
 }
 
 .skeleton-loader {
-  background-color: #e0e0e0;
-  height: 100%;
-  animation: pulse 1.5s infinite;
+  width: 90%;
+  height: 16px;
+  background-color: #ddd;
+  position: relative;
+  overflow: hidden;
+  margin: 6px;
 }
 
-@keyframes pulse {
-  0% {
-    opacity: 0.5;
-  }
+.skeleton-loader::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -150px;
+  height: 100%;
+  width: 100px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+  animation: loading 1.5s infinite;
+}
 
-  50% {
-    opacity: 0.8;
+@keyframes loading {
+  0% {
+    left: -100px;
   }
 
   100% {
-    opacity: 0.5;
+    left: 100%;
   }
 }
 

@@ -6,10 +6,11 @@ import { GridMaster } from '../../projects/ngx-grid-master/src/public-api';
 import { FilterPipe } from "../../projects/ngx-grid-master/src/lib/shared/pipes/filterPipe.pipe";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { TableComponent } from "../../projects/ngx-grid-master/src/lib/components/table/table.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [GridMaster, ScrollingModule, FilterPipe, CommonModule, FormsModule],
+  imports: [GridMaster, ScrollingModule, FilterPipe, CommonModule, FormsModule, TableComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -120,7 +121,7 @@ export class AppComponent {
     { label: 'Hold', field: 'holds', isShow: true, isEdit: true, style: 'width: 100px' },
     { label: 'Test Description', field: 'testDesc', isShow: true, isEdit: false, style: 'width: 100px', readOnly: true },
     {
-      label: 'Result', field: 'results',sortIndicator: true, isShow: true, isEdit: true, style: 'width: 100px', type: 'numeric'
+      label: 'Result', field: 'results', sortIndicator: true, isShow: true, isEdit: true, style: 'width: 100px', type: 'numeric'
     },
     {
       label: 'Result Text', field: 'resultText', isShow: true, isEdit: true, style: 'width: 130px', type: 'dropdown', options: [
