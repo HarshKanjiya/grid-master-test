@@ -1,36 +1,49 @@
-.viewport {
-    border: 1px solid #ccc;
+.full-screen-table {
     position: relative;
-    overflow: auto;
-    height: calc(100% - 200px);
-    /* Allow scrolling */
+    width: 100vw;
+    height: 100vh;
 }
 
-.excel-table {
+.scrollable-container {
     width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+}
+
+.virtual-table {
     border-collapse: collapse;
-    /* Collapse borders */
     table-layout: fixed;
-    /* Ensures uniform cell width */
+    width: 100%;
 }
 
-.excel-table th,
-.excel-table td {
+th,
+td {
+    width: 120px;
+    height: 40px;
+    padding: 5px;
+    text-align: center;
     border: 1px solid #ddd;
-    /* Border for table cells */
-    padding: 8px;
-    /* Padding inside cells */
-    text-align: left;
-    /* Align text to the left */
 }
 
-.excel-table th {
-    background-color: #f2f2f2;
-    /* Header background color */
+.sticky-column {
     position: sticky;
-    /* Make header sticky */
+    left: 0;
+    background-color: #f3f3f3;
+    z-index: 2;
+    border-right: 2px solid #ccc;
+}
+
+.sticky-header {
+    position: sticky;
     top: 0;
-    /* Stick to the top */
-    z-index: 10;
-    /* Bring header above other rows */
+    background-color: #f3f3f3;
+    z-index: 1;
+    border-bottom: 2px solid #ccc;
+}
+
+.spacer {
+    position: absolute;
+    top: 0;
+    left: 0;
 }

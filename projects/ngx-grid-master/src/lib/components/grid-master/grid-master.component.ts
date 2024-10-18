@@ -204,37 +204,29 @@ export class GridMaster {
 
     if ((start.row ?? -1) < 0 || (end.col ?? -1) < 0) return
 
-    let slice = [];
+    const sliceArray = [];
 
-    if (start.row == end.row && start.col == end.col) {
-      // paste everything
-      valueArr.forEach((valRow: string[], valRowInd) => {
-        valRow.forEach((val: string, valColInd: number) => {
-          const row = valRowInd + start.row;
-          const col = valColInd + start.col;
-          const history = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
-          slice.push(history);
-          this.data()[row][this.horizontalHeaderData()[col].field] = val;
-        })
-      });
-    } else {
-      // paste in selected cells
-      valueArr.forEach((valRow: string[], valRowInd) => {
-        valRow.forEach((val: string, valColInd: number) => {
-          const row = valRowInd + start.row;
-          const col = valColInd + start.col;
-          if (row > end.row || col > end.col) return
-          const history = { row: row, col: col, oldValue: this.data()[row][this.horizontalHeaderData()[col].field], newValue: val };
-          slice.push(history);
-          this.data()[row][this.horizontalHeaderData()[col].field] = val;
-        })
-      });
+    for (let valRowInd = 0; valRowInd < valueArr.length; valRowInd++) {
+      const valRow = valueArr[valRowInd];
+      for (let valColInd = 0; valColInd < valRow.length; valColInd++) {
+        const val = valRow[valColInd];
+        const row = valRowInd + start.row;
+        const col = valColInd + start.col;
+        const history = {
+          row: row,
+          col: col,
+          oldValue: this.data()[row][this.horizontalHeaderData()[col].field],
+          newValue: val
+        };
+
+        sliceArray.push(history);
+        this.data()[row][this.horizontalHeaderData()[col].field] = val;
+      }
     }
-
-    this.undoStack.push(slice);
+    this.undoStack.push(sliceArray);
     this.redoStack = [];
 
-    this.selectionEnd.set({ row: slice.pop().row, col: slice.pop().col })
+    this.selectionEnd.set({ row: sliceArray[sliceArray?.length - 1].row, col: sliceArray[sliceArray?.length - 1].col })
   }
 
   getDefaultCell(value: string): ICell {
@@ -300,7 +292,7 @@ export class GridMaster {
 
   //#region undo redo
   saveHistory(params) {
-    this.undoStack.push(params);
+    this.undoStack.push([params]);
     this.redoStack = [];
   }
 
@@ -325,6 +317,8 @@ export class GridMaster {
   }
 
   setUndoRedoData(type: "UNDO" | "REDO", slice: { row: number, col: number, oldValue: any, newValue: any }[]) {
+    console.log(slice);
+    
     slice.forEach((change) => {
       this.setDataAtCell(change.row, change.col, type == "UNDO" ? change.oldValue : change.newValue);
     })
