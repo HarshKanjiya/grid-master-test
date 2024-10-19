@@ -15,6 +15,8 @@ import { IHeaderCell } from '../../types/interfaces';
 export class CellComponent {
 
   @ViewChild('inputElement') inputElement?: ElementRef;
+  @ViewChild('checkboxElement') checkboxElement?: ElementRef;
+
   cell = model<any>();
   currentCell = input<IHeaderCell>();
   focused = input<boolean>();
@@ -26,6 +28,7 @@ export class CellComponent {
   constructor() {
     effect(() => {
       if (this.focused() && this.inputElement) this.inputElement.nativeElement.focus();
+      if (this.focused() && this.checkboxElement) this.checkboxElement.nativeElement.focus();
       this.currentValue = this.cell();
       this.oldValue = this.cell();
     })

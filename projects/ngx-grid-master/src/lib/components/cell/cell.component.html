@@ -11,7 +11,7 @@
 
   } @case ("checkbox"){
   <label class="container">
-    <input class="cell" type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
+    <input class="cell" #checkboxElement type="checkbox" [checked]="cell()" [value]="false" [(ngModel)]="currentValue"
       (change)="saveValue($event['currentTarget']['checked'])" />
   </label>
   } @default {

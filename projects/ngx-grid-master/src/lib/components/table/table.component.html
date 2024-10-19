@@ -1,35 +1,76 @@
-<div class="full-screen-table">
-  <div class="scrollable-container" (scroll)="onScroll($event)">
-    <table class="virtual-table">
-      <colgroup>
-        <col style="width: 50px;">
-        <col *ngFor="let col of colGroups"
-             [style.min-width.px]="col.width">
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="sticky-column sticky-header">#</th>
-          <th *ngFor="let colIndex of visibleColumns; trackBy: trackByIndex" class="sticky-header">
-            Col {{ colIndex }}
-          </th>
-        </tr>
-      </thead>
-    </table>
+<div class="table-container">
+  <table class="virtual-table">
+    <colgroup>
+      <col style="width: 50px;">
+      <col *ngFor="let col of columns; trackBy: trackByIndex" [style]="col.style">
+    </colgroup>
 
+    <thead [style.transform]="getTransformStyleForHeader()">
+      <tr class="sticky-header">
+        <!-- Sticky First Column (Row Index) -->
+        <th class="sticky-column">Col 0</th>
+        <!-- Render all columns -->
+        <th *ngFor="let col of columns; let colIndex = index; trackBy: trackByIndex">{{col?.label }}</th>
+      </tr>
+    </thead>
+  </table>
+  <div class="scrollable-container" #scrollableElement (scroll)="onScroll($event)">
+    <!-- Table Header -->
+
+    <!-- Spacer for virtual scrolling -->
     <div class="spacer" [style.height.px]="totalHeight" [style.width.px]="totalWidth"></div>
 
-    <table class="virtual-table">
+    <!-- Table Body -->
+    <table class="virtual-table" copyPaste [data]="sampleData" [start]="selectionStart" [end]="selectionEnd"
+      [columns]="columns" (onPaste)="onCellPaste($event)" arrowControl (arrowDown)="onArrowDown()"
+      (arrowUp)="onArrowUp()" (arrowLeft)="onArrowLeft()" (arrowRight)="onArrowRight()">
+
       <colgroup>
         <col style="width: 50px;">
-        <col *ngFor="let col of colGroups"
-             [style.min-width.px]="col.width">
+        <col *ngFor="let col of columns; trackBy: trackByIndex" [style]="col.style">
       </colgroup>
+
       <tbody [style.transform]="getTransformStyle()">
-        <tr *ngFor="let row of visibleItems; let rowIndex = index; trackBy: trackByIndex">
-          <th class="sticky-column">{{ startRowIndex + rowIndex + 1 }}</th>
-          <td *ngFor="let cell of row; trackBy: trackByIndex">{{ cell }}</td>
+        @if(isLoading()){
+        @for (item of [].constructor(100); track $index) {
+        <tr>
+          @for (cell of columns; track $index; let rowIndex = $index) {
+          <td>
+            <div class="skeleton-loader"></div>
+          </td>
+          }
         </tr>
+        }
+        }
+        @else{
+        <tr *ngFor="let row of visibleRows; let rowIndex = index; trackBy: trackByIndex">
+          <!-- Sticky first column (Row Index) -->
+          <th class="sticky-column">{{ startRowIndex + rowIndex + 1 }}</th>
+          <!-- Render all cells in each row -->
+          <!-- <td *ngFor="let cell of row; trackBy: trackByIndex">
+            <app-cell [data]="cell"></app-cell>
+          </td> -->
+
+          @for (cell of columns; track $index; let colIndex = $index;)
+          {
+          <td (mousedown)="onMouseDown(startRowIndex + rowIndex, colIndex + startColIndex)"
+            (mouseenter)="onMouseEnter( startRowIndex + rowIndex, colIndex + startColIndex)" (mouseup)="onMouseUp()"
+            [ngClass]="isSelected(startRowIndex + rowIndex, colIndex + startColIndex)"
+            (focus)="selectCell(startRowIndex + rowIndex, startColIndex + colIndex)">
+
+            <grid-cell [(cell)]="row[cell?.field]" [currentCell]="columns[startColIndex + colIndex]"
+              (onchange)="saveHistory({row:startRowIndex + rowIndex, col:startColIndex + colIndex, oldValue: $event?.oldValue, newValue: $event.newValue })"
+              [focused]="isCellSelected(startRowIndex + rowIndex, startColIndex + colIndex)"></grid-cell>
+          </td>
+          }
+
+        </tr>
+        }
       </tbody>
     </table>
   </div>
 </div>
+
+<!-- <div style="position: fixed; z-index: 99999; bottom: 0; background-color: white;">
+  <h2>{{getTransformStyle()}}</h2>
+</div> -->

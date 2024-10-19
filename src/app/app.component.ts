@@ -114,7 +114,7 @@ export class AppComponent {
   column = [
     { label: 'Checked', field: 'isSelected', isShow: true, style: 'width: 56px;', type: 'checkbox', className: 'alignCenter' },
     { label: 'Sample', field: 'sampleID', sortIndicator: true, isShow: true, isEdit: false, style: 'width: 100px;', readOnly: true },
-    { label: 'Date', field: 'sourceDate', sortIndicator: true, isShow: true, isEdit: true, style: 'width: 100px', type: 'date', dateFormat: 'MM/DD/YYYY', correctFormat: true, allowInvalid: false },
+    { label: 'Date', field: 'sourceDate', sortIndicator: true, isShow: true, isEdit: true, style: 'width: 140px', type: 'date', dateFormat: 'MM/DD/YYYY', correctFormat: true, allowInvalid: false },
     { label: 'Lot No.', field: 'lotNumber', isShow: true, isEdit: true, style: 'width: 100px' },
     { label: 'Sample Description', field: 'sampleDesc', isShow: true, isEdit: true, style: 'width: 192px' },
 
@@ -761,7 +761,7 @@ export class AppComponent {
   // }
 
 
-  onDataChange(event: any) {
-    console.log('event :>> ', event);
+  afterChange(changes: any) {
+    console.log('changes :>> ', changes);
   }
 }

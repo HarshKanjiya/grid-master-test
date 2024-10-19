@@ -14,6 +14,8 @@ export class CustomDatepickerComponent implements OnInit {
   @Input() dateFormat: string = 'MM/dd/yyyy'; // Default format
   @Input() appendToBody: boolean = true; // Option to append to body
 
+  @ViewChild('datePicker') datePicker: ElementRef;  // Reference to the date picker element
+  
   model = model<any>(); // bind value
 
   focused = input<boolean>();
@@ -68,7 +70,7 @@ export class CustomDatepickerComponent implements OnInit {
   get monthDays() {
     let year = this.currentYear;
     let month = this.currentMonth;
-    if(this.defaultSelectedValue()){
+    if (this.defaultSelectedValue()) {
       let date = new Date(this.defaultSelectedValue());
       year = date.getFullYear();
       month = date.getMonth();
@@ -82,6 +84,10 @@ export class CustomDatepickerComponent implements OnInit {
 
   toggleDatePicker(): void {
     this.isDatePickerOpen = !this.isDatePickerOpen;
+    setTimeout(() => {
+      if (this.isDatePickerOpen)
+        this.setDatePickerPosition();
+    }, 0);
   }
 
   toggleMonthList(): void {
@@ -202,6 +208,46 @@ export class CustomDatepickerComponent implements OnInit {
       event.preventDefault(); // Prevent scrolling
       event.stopPropagation();
       this.isDatePickerOpen = false; // close calendar
+    }
+  }
+
+  setDatePickerPosition() {
+    const targetElement = this.inputElement.nativeElement;
+    const targetRect = targetElement.getBoundingClientRect();
+    const datePickerElement = this.datePicker.nativeElement;
+    
+    const datePickerHeight = datePickerElement.offsetHeight;
+    const datePickerWidth = datePickerElement.offsetWidth;
+
+    // Get the viewport height and width
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    // Calculate space available below and above the target element
+    const spaceBelow = viewportHeight - targetRect.bottom;
+    const spaceAbove = targetRect.top;
+
+    // Determine whether to show the date picker above or below the input
+    let top: number = 0;
+    if (spaceBelow < datePickerHeight) {
+      top = -300;
+    } 
+
+    // Calculate left position (ensure it stays within viewport width)
+    let left = 130;
+    if (targetRect.right < (datePickerWidth + 30) ) {
+      left = -630;
+    }
+    
+    // debugger
+    this.datePicker.nativeElement.style.top = `${top}px`;
+    this.datePicker.nativeElement.style.left = `${left}px`;
+  }
+  @HostListener('window:resize')
+  onResize() {
+    if (this.isDatePickerOpen) {
+      // Recalculate the position on window resize
+      this.setDatePickerPosition();
     }
   }
 

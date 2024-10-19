@@ -1,49 +1,126 @@
-.full-screen-table {
-    position: relative;
+/* Full-screen container */
+.table-container {
     width: 100vw;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
+    font-family: "Figtree", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    touch-action: manipulation;
 }
 
+/* Scrollable container for both horizontal and vertical scrolling */
 .scrollable-container {
     width: 100%;
     height: 100%;
     overflow: auto;
     position: relative;
+    scroll-behavior: smooth;
 }
 
+/* Virtual Table Styling */
 .virtual-table {
-    border-collapse: collapse;
-    table-layout: fixed;
+    /* border-collapse: collapse; */
     width: 100%;
+    table-layout: fixed;
 }
 
-th,
-td {
-    width: 120px;
-    height: 40px;
-    padding: 5px;
-    text-align: center;
+th {
+    padding: 10px;
     border: 1px solid #ddd;
+    text-align: center;
+    /* Adjust the width as needed */
+    height: 30px;
+    user-select: none;
+    word-wrap: break-word;
 }
 
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    user-select: none;
+    word-wrap: break-word;
+}
+
+/* Sticky Column (Row Index) */
 .sticky-column {
     position: sticky;
     left: 0;
-    background-color: #f3f3f3;
-    z-index: 2;
-    border-right: 2px solid #ccc;
+    background-color: #f0f0f0;
+    z-index: 3;
+    border-right: 1px solid #ccc;
 }
 
+/* Sticky Header */
 .sticky-header {
     position: sticky;
     top: 0;
-    background-color: #f3f3f3;
-    z-index: 1;
-    border-bottom: 2px solid #ccc;
+    background-color: #f0f0f0;
+    z-index: 2;
+    border-bottom: 1px solid #ccc;
 }
 
+/* Spacer for virtual scrolling */
 .spacer {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+
+.skeleton-loader {
+    width: 100%;
+    height: 16px;
+    background-color: #ddd;
+    position: relative;
+    overflow: hidden;
+    margin: 6px;
+}
+
+.skeleton-loader::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 100px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        left: -100px;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+.selected-cell {
+    background-color: #f7f7f7;
+}
+
+/* Style for top border */
+.selected-cell-top {
+    border-top: 1px solid rgb(29 129 255);
+}
+
+/* Style for bottom border */
+.selected-cell-bottom {
+    border-bottom: 1px solid rgb(29 129 255);
+}
+
+/* Style for left border */
+.selected-cell-left {
+    border-left: 1px solid rgb(29 129 255);
+}
+
+/* Style for right border */
+.selected-cell-right {
+    border-right: 1px solid rgb(29 129 255);
 }

@@ -4,7 +4,8 @@
 
   <div class="icon" (click)="toggleDatePicker()">📅</div>
 
-  <div *ngIf="isDatePickerOpen" class="datepicker" [ngClass]="{'append-to-body': appendToBody}">
+  <div *ngIf="isDatePickerOpen" class="datepicker" #datePicker>
+
     <div class="header">
       <span class="prev" (click)="navigateMonth(-1)">&#10094;</span>
       <span (click)="toggleMonthList()">{{ currentMonthName }}</span>

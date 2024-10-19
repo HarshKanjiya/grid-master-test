@@ -26,13 +26,13 @@ export class ArrowControlDirective {
         this.arrowDown.emit(true);
         break;
       case 'ArrowLeft':
-        if (cursorPosition === 0) {
+        if (event.target['readOnly'] || !cursorPosition || cursorPosition === 0) {
           event.preventDefault();
           this.arrowLeft.emit(true);
         }
         break;
       case 'ArrowRight':
-        if (cursorPosition === input.value.length) {
+        if (cursorPosition === input.value?.length) {
           event.preventDefault();
           this.arrowRight.emit(true);
         }

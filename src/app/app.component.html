@@ -22,4 +22,5 @@ flex-wrap: wrap;">
 <!-- <grid-master [isLoading]="isLoading" [horizontalHeader]="true" [verticalHeader]="true" [allowStyling]="false"
   [data]="sampleData" [horizontalHeaderData]="column" (dataChange)="onDataChange($event)"></grid-master> -->
 
-<app-table></app-table>
+<app-table [isLoading]="isLoading" [columns]="column" [sampleData]="sampleData"
+  (afterChange)="afterChange($event)"></app-table>
